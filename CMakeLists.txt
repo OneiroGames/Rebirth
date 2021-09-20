@@ -17,6 +17,5 @@ add_executable(${CMAKE_PROJECT_NAME}
 
 add_subdirectory(ThirdParty/GLFW)
 add_subdirectory(ThirdParty/glad)
-target_link_libraries(${CMAKE_PROJECT_NAME} glfw)
-target_link_libraries(${CMAKE_PROJECT_NAME} glad)
-target_link_libraries(${CMAKE_PROJECT_NAME} OpenGL::GL)
+add_subdirectory(ThirdParty/glm)
+target_link_libraries(${CMAKE_PROJECT_NAME} glfw glad glm OpenGL::GL)
