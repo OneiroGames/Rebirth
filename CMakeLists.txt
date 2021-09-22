@@ -12,10 +12,22 @@ include_directories(Source/)
 
 find_package(OpenGL REQUIRED)
 
+file(GLOB RebirthSRC
+        "Source/*.h"
+        "Source/*.cpp"
+        "Source/Engine/Core/*.h"
+        "Source/Engine/Core/*.cpp"
+        "Source/Engine/Core/Platform/Platform.h"
+        "Source/Engine/Core/Platform/*/*.h"
+        "Source/Engine/Core/Platform/*/*.cpp"
+        "Source/Engine/Core/OpenGL/*.h"
+        "Source/Engine/Core/OpenGL/*.cpp"
+        )
 add_executable(${CMAKE_PROJECT_NAME}
         Source/main.cpp
 
-        # ImGUi
+        ${RebirthSRC}
+
         ThirdParty/ImGui/imgui_widgets.cpp
         ThirdParty/ImGui/imgui.cpp
         ThirdParty/ImGui/imgui_draw.cpp
