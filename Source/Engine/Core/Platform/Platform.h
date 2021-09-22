@@ -9,7 +9,8 @@
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
 
-struct WindowProperties {
+struct WindowProperties
+{
     GLFWwindow* window;
     int width;
     int height;

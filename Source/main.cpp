@@ -3,8 +3,12 @@
 //
 
 #include <iostream>
-#include "Engine/Core/Platform/Platform.h"
-#include "Engine/Core/Platform/Windows/WindowsWindow.h"
+
+#ifdef __MINGW64__
+    #include "Engine/Core/Platform/Windows/WindowsWindow.h"
+#elif __linux__
+    #include "Engine/Core/Platform/Linux/LinuxWindow.h"
+#endif
 
 #include "Engine/Core/OpenGL/Shader.h"
 #include "Engine/Core/OpenGL/VertexArray.h"
@@ -25,7 +29,7 @@
 
 int main()
 {
-    WindowProperties windowProps = WindowsWindow::CreateWindow(1280, 720, "Rebirth Engine");
+    WindowProperties windowProps = WindowHnd::CreateWindow(1280, 720, "Rebirth");
 
     stbi_set_flip_vertically_on_load(true);
 
