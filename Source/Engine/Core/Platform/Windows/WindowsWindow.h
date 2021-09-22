@@ -5,13 +5,16 @@
 #ifndef REBIRTH_WINDOWSWINDOW_H
 #define REBIRTH_WINDOWSWINDOW_H
 
-#include <Engine/Core/Platform/Platform.h>
+#ifdef __MINGW64__
 
-class WindowsWindow
+#include "Engine/Core/Platform/Platform.h"
+
+class WindowHnd
 {
 public:
     static WindowProperties CreateWindow(unsigned int width, unsigned int height, const char* title);
 };
 
+#endif
 
 #endif //REBIRTH_WINDOWSWINDOW_H
