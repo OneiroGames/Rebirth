@@ -40,12 +40,12 @@ Texture::Texture(const char *texturePath, bool rgba)
     stbi_image_free(data);
 }
 
-void Texture::Bind()
+void Texture::Bind() const
 {
     glBindTexture(GL_TEXTURE_2D, mTextureID);
 }
 
-void Texture::UnBind()
+void Texture::UnBind() const
 {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
