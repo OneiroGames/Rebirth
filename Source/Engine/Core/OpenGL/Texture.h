@@ -9,7 +9,7 @@ class Texture
 {
 public:
     Texture();
-    Texture(const char* texturePath, bool rgba = false);
+    Texture(const char* texturePath);
 
     ~Texture();
 
