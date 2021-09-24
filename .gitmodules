@@ -13,3 +13,6 @@
 [submodule "ThirdParty/ImGui"]
 	path = ThirdParty/ImGui
 	url = https://github.com/ocornut/imgui
+[submodule "ThirdParty/LBridge"]
+	path = ThirdParty/LBridge
+	url = https://github.com/vinniefalco/LuaBridge

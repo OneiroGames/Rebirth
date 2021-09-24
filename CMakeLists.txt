@@ -7,10 +7,14 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-include_directories(ThirdParty/)
-include_directories(Source/)
 
 find_package(OpenGL REQUIRED)
+find_package(Lua51 REQUIRED)
+
+include_directories(ThirdParty/)
+include_directories(Source/)
+include_directories(/usr/include/lua5.1/)
+include_directories(ThirdParty/LBridge/Source/)
 
 file(GLOB RebirthSRC
         "Source/*.h"
@@ -23,6 +27,7 @@ file(GLOB RebirthSRC
         "Source/Engine/Core/OpenGL/*.h"
         "Source/Engine/Core/OpenGL/*.cpp"
         )
+
 add_executable(${CMAKE_PROJECT_NAME}
         Source/main.cpp
 
@@ -39,9 +44,11 @@ add_executable(${CMAKE_PROJECT_NAME}
 add_subdirectory(ThirdParty/GLFW)
 add_subdirectory(ThirdParty/glad)
 add_subdirectory(ThirdParty/glm)
+add_subdirectory(ThirdParty/LBridge/)
 target_link_libraries(${CMAKE_PROJECT_NAME}
         glfw
         glad
         glm
+        ${LUA_LIBRARIES}
         OpenGL::GL
         )
