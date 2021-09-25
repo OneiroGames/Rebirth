@@ -4,7 +4,7 @@
 
 #include "Application.h"
 
-const char* vertexShaderSrc = R"(
+constexpr const char* vertexShaderSrc = R"(
         #version 330 core
         layout (location = 0) in vec3 aPos;
         layout (location = 1) in vec2 aTexCoords;
@@ -19,7 +19,7 @@ const char* vertexShaderSrc = R"(
         }
     )";
 
-const char* fragmentShaderSrc = R"(
+constexpr const char* fragmentShaderSrc = R"(
         #version 330 core
         out vec4 FragColor;
 
@@ -63,13 +63,13 @@ void Application::Run()
     bgShader.LoadFromSource(vertexShaderSrc, fragmentShaderSrc);
     mShaders.push_back(bgShader);
 
-    const float vertices[] = {
+    constexpr const float vertices[] = {
             1920.0f,  1080.0f, 0.0f,
             1920.0f, -1080.0f, 0.0f,
             -1920.0f,  1080.0f, 0.0f
     };
 
-    const unsigned int indices[] = {
+    constexpr const unsigned int indices[] = {
             0, 1, 2,
             2, 3, 0
     };

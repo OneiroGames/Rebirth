@@ -6,6 +6,6 @@
 
 int main()
 {
-    Application app;
-    app.Run();
+    auto* app = new Application;
+    app->Run();
 }
