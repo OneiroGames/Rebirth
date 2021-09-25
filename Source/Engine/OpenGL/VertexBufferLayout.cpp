@@ -3,6 +3,7 @@
 //
 
 #include "VertexBufferLayout.h"
+#include "glad/glad.h"
 
 template<>
 void VertexBufferLayout::Push<float>(unsigned int id, unsigned int size, unsigned int stride, unsigned int pointer)

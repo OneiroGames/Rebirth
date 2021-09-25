@@ -26,7 +26,9 @@ WindowProperties WindowHnd::CreateWindow(unsigned int width, unsigned int height
     glfwSwapInterval(1);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
         std::runtime_error("Failed to init glad!");
+    }
 
     return windowProps;
 }

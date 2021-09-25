@@ -6,14 +6,11 @@
 #define REBIRTH_VERTEXBUFFERLAYOUT_H
 
 
-#include "glad/glad.h"
-
 class VertexBufferLayout
 {
 public:
     template<class T>
     static void Push(unsigned int id, unsigned int size, unsigned int stride, unsigned int pointer) {}
-private:
 };
 
 

@@ -17,6 +17,7 @@ public:
     void UnBind() const;
     int width, height;
 
+    void Load(const char* path);
 private:
     unsigned int mTextureID;
 };

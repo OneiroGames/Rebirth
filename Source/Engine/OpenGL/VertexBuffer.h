@@ -9,6 +9,7 @@
 class VertexBuffer
 {
 public:
+    VertexBuffer() {}
     VertexBuffer(unsigned int size, const float* pVertices);
     ~VertexBuffer();
 

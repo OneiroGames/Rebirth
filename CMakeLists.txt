@@ -13,7 +13,6 @@ find_package(Lua51 REQUIRED)
 
 include_directories(ThirdParty/)
 include_directories(Source/)
-include_directories(/usr/include/lua5.1/)
 include_directories(ThirdParty/LBridge/Source/)
 
 file(GLOB RebirthSRC
@@ -21,11 +20,13 @@ file(GLOB RebirthSRC
         "Source/*.cpp"
         "Source/Engine/Core/*.h"
         "Source/Engine/Core/*.cpp"
-        "Source/Engine/Core/Platform/Platform.h"
-        "Source/Engine/Core/Platform/*/*.h"
-        "Source/Engine/Core/Platform/*/*.cpp"
-        "Source/Engine/Core/OpenGL/*.h"
-        "Source/Engine/Core/OpenGL/*.cpp"
+        "Source/Engine/Platform/Platform.h"
+        "Source/Engine/Platform/*/*.h"
+        "Source/Engine/Platform/*/*.cpp"
+        "Source/Engine/OpenGL/*.h"
+        "Source/Engine/OpenGL/*.cpp"
+        "Source/Engine/Application/*.h"
+        "Source/Engine/Application/*.cpp"
         )
 
 add_executable(${CMAKE_PROJECT_NAME}
@@ -39,7 +40,7 @@ add_executable(${CMAKE_PROJECT_NAME}
         ThirdParty/ImGui/imgui_tables.cpp
         ThirdParty/ImGui/backends/imgui_impl_glfw.cpp
         ThirdParty/ImGui/backends/imgui_impl_opengl3.cpp
-        )
+        Source/Engine/OpenGL/IndexBuffer.cpp Source/Engine/OpenGL/VertexArray.cpp)
 
 add_subdirectory(ThirdParty/GLFW)
 add_subdirectory(ThirdParty/glad)

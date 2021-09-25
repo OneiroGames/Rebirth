@@ -5,10 +5,10 @@
 #ifndef REBIRTH_INDEXBUFFER_H
 #define REBIRTH_INDEXBUFFER_H
 
-
 class IndexBuffer
 {
 public:
+    IndexBuffer() {}
     IndexBuffer(unsigned int size, const unsigned int *pIndices);
     ~IndexBuffer();
 
