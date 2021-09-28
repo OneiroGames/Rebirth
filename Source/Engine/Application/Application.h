@@ -5,13 +5,14 @@
 #ifndef REBIRTH_APPLICATION_H
 #define REBIRTH_APPLICATION_H
 
+
 #ifdef __MINGW64__
 #include "Engine/Platform/Windows/WindowsWindow.h"
 #elif __linux__
 #include "Engine/Platform/Linux/LinuxWindow.h"
 #endif
 
-#include <vector>
+#include <deque>
 
 #include "Engine/OpenGL/Shader.h"
 #include "Engine/OpenGL/VertexArray.h"
@@ -19,6 +20,7 @@
 #include "Engine/OpenGL/VertexBufferLayout.h"
 #include "Engine/OpenGL/IndexBuffer.h"
 #include "Engine/OpenGL/Texture.h"
+#include "Config.h"
 
 #include "glm/glm/glm.hpp"
 #include "glm/glm/gtc/matrix_transform.hpp"
@@ -31,7 +33,6 @@
 #include "LuaBridge/LuaBridge.h"
 
 namespace lb = luabridge;
-
 
 class Application
 {
@@ -46,14 +47,10 @@ private:
     IndexBuffer mEBO;
     WindowProperties mWindowProps;
 
-    std::vector<Shader> mShaders;
-    std::vector<Texture> mTextures;
+    Config mConfigs;
 
-    lb::LuaRef mStartLabel = nullptr;
-
-    bool mNextState = true;
-
-    short unsigned int mLabelTableIt = 1;
+    std::deque<Shader> mShaders;
+    std::deque<Texture> mTextures;
 };
 
 

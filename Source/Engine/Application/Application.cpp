@@ -40,24 +40,46 @@ constexpr const char* fragmentShaderSrc = R"(
 
 Application::Application()
 {
-
 }
 
 Application::~Application()
 {
 }
 
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if (action == GLFW_PRESS)
+    {
+        switch (button)
+        {
+        case GLFW_MOUSE_BUTTON_LEFT:
+            break;
+        default:
+            break;
+        }
+    }
+}
+
 void Application::Run()
 {
     lua_State* L = luaL_newstate();
-    luaL_loadfile(L, "script.lua");
     luaL_openlibs(L);
-    lua_pcall(L, 0, 0, 0);
-    lb::LuaRef LuaWindowProps = lb::getGlobal(L, "window");
 
-    mWindowProps = WindowHnd::CreateWindow(LuaWindowProps["width"].cast<int>(), LuaWindowProps["height"].cast<int>(), LuaWindowProps["title"].cast<const char*>());
+    mConfigs.Run(L);
+
+    luaL_loadfile(L, "config.lua");
+    lua_pcall(L, 0, 0, 0);
+
+    mWindowProps = WindowHnd::CreateWindow(mConfigs.GetWindowWidth(), mConfigs.GetWindowHeight(), mConfigs.GetWindowTitle());
 
     stbi_set_flip_vertically_on_load(true);
+
+    lua_close(L);
+
+    L = luaL_newstate();
+    luaL_openlibs(L);
+    luaL_loadfile(L, mConfigs.GetGameStartFile());
+    lua_pcall(L, 0, 0, 0);
 
     Shader bgShader;
     bgShader.LoadFromSource(vertexShaderSrc, fragmentShaderSrc);
@@ -66,7 +88,7 @@ void Application::Run()
     constexpr const float vertices[] = {
             1920.0f,  1080.0f, 0.0f,
             1920.0f, -1080.0f, 0.0f,
-            -1920.0f,  1080.0f, 0.0f
+           -1920.0f,  1080.0f, 0.0f
     };
 
     constexpr const unsigned int indices[] = {
@@ -87,40 +109,12 @@ void Application::Run()
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_ALWAYS);
 
-    mStartLabel = lb::getGlobal(L, "label_start");
-
     mVAO = VAO; mVBO = VBO; mEBO = EBO;
 
     while (!glfwWindowShouldClose(mWindowProps.window))
     {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        if (mNextState && mLabelTableIt != 0)
-        {
-            std::cout << mLabelTableIt << std::endl;
-            if (mLabelTableIt == mStartLabel.length() + 1)
-            {
-                mNextState = false;
-                mLabelTableIt = 0;
-            }
-            else
-            {
-                if (!mStartLabel.rawget(mLabelTableIt)["background"].isNil())
-                {
-                    if (mTextures.size() == 0)
-                    {
-                        mTextures.push_back(Texture(mStartLabel.rawget(mLabelTableIt)["background"].cast<std::string>().c_str()));
-                    }
-                    else
-                    {
-                        mTextures[0].Load(mStartLabel.rawget(mLabelTableIt)["background"].cast<std::string>().c_str());
-                    }
-                    mLabelTableIt++;
-                }
-            }
-            mNextState = false;
-        }
 
         glfwGetFramebufferSize(mWindowProps.window, &mWindowProps.width, &mWindowProps.height);
 
@@ -132,7 +126,7 @@ void Application::Run()
 
         mVAO.Bind();
 
-        for (unsigned int i = 0; i < mTextures.size() && i < mShaders.size(); ++i)
+        for (short int i = 0; i < mTextures.size() && i < mShaders.size(); ++i)
         {
             mShaders[i].use();
             mShaders[i].SetUniform<glm::mat4>("uMVP", MVP);
