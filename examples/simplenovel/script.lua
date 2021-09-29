@@ -1,0 +1,16 @@
+local img = Image("bus_stop.jpg")
+local img2 = Image("ext_aidpost_day.jpg")
+local spr2 = Image("shizyka_smile.png")
+local spr = Sprite("normal.png")
+
+function label_start()
+    scene(img)
+    spr2:show()
+    text("Welcome to Rebirth Engine!")
+    spr2:hide()
+    text("Your ad could be here...")
+    scene(img2)
+    spr:show()
+    text("Your ad could be here...")
+    spr:hide()
+end
