@@ -27,6 +27,12 @@ file(GLOB RebirthSRC
         "Source/Engine/OpenGL/*.cpp"
         "Source/Engine/Application/*.h"
         "Source/Engine/Application/*.cpp"
+        "Source/Engine/VNTools/*.cpp"
+        "Source/Engine/VNTools/*.h"
+        "Source/Engine/Core/*.cpp"
+        "Source/Engine/Core/*.h"
+        "Source/Engine/Lua/*.cpp"
+        "Source/Engine/Lua/*.h"
         )
 
 add_executable(${CMAKE_PROJECT_NAME}
@@ -40,7 +46,7 @@ add_executable(${CMAKE_PROJECT_NAME}
         ThirdParty/ImGui/imgui_tables.cpp
         ThirdParty/ImGui/backends/imgui_impl_glfw.cpp
         ThirdParty/ImGui/backends/imgui_impl_opengl3.cpp
-        Source/Engine/OpenGL/IndexBuffer.cpp Source/Engine/OpenGL/VertexArray.cpp)
+        )
 
 add_subdirectory(ThirdParty/GLFW)
 add_subdirectory(ThirdParty/glad)

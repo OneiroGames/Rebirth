@@ -45,12 +45,11 @@ private:
     VertexArray mVAO;
     VertexBuffer mVBO;
     IndexBuffer mEBO;
-    WindowProperties mWindowProps;
+    WindowProperties mWindowProps{};
 
     Config mConfigs;
 
-    std::deque<Shader> mShaders;
-    std::deque<Texture> mTextures;
+    unsigned short int mCurrentIterator;
 };
 
 

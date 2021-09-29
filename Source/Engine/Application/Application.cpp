@@ -3,48 +3,19 @@
 //
 
 #include "Application.h"
+#include "Engine/VNTools/VNScript.h"
+#include "Engine/Core/Core.h"
+extern std::vector<VNStatementInfo> StatementsList;
+extern const char* vertexShaderSrc;
+extern const char* fragmentShaderSrc;
+extern std::deque<std::pair<const LuaImage*, Shader>> shaders;
+extern std::deque<std::pair<const LuaImage*, Texture>> textures;
 
-constexpr const char* vertexShaderSrc = R"(
-        #version 330 core
-        layout (location = 0) in vec3 aPos;
-        layout (location = 1) in vec2 aTexCoords;
-        uniform mat4 uMVP;
+static bool NextState = true;
 
-        out vec2 TexCoords;
+Application::Application() = default;
 
-        void main()
-        {
-            TexCoords = aPos.xy;
-            gl_Position = uMVP * vec4(aPos, 1.0);
-        }
-    )";
-
-constexpr const char* fragmentShaderSrc = R"(
-        #version 330 core
-        out vec4 FragColor;
-
-        uniform sampler2D uTexture;
-
-        uniform int uTextureWidth, uTextureHeight;
-
-        in vec2 TexCoords;
-
-        void main()
-        {
-            vec4 Texture = texture2D(uTexture, vec2(TexCoords.x / uTextureWidth, TexCoords.y / uTextureHeight));
-            if(Texture.a < 0.1)
-					discard;
-            FragColor = Texture;
-        }
-    )";
-
-Application::Application()
-{
-}
-
-Application::~Application()
-{
-}
+Application::~Application() = default;
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
@@ -53,6 +24,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
         switch (button)
         {
         case GLFW_MOUSE_BUTTON_LEFT:
+            NextState = true;
             break;
         default:
             break;
@@ -72,18 +44,17 @@ void Application::Run()
 
     mWindowProps = WindowHnd::CreateWindow(mConfigs.GetWindowWidth(), mConfigs.GetWindowHeight(), mConfigs.GetWindowTitle());
 
+    glfwSetMouseButtonCallback(mWindowProps.window, mouse_button_callback);
+
     stbi_set_flip_vertically_on_load(true);
 
     lua_close(L);
 
     L = luaL_newstate();
     luaL_openlibs(L);
+    VNScript::Run(L);
     luaL_loadfile(L, mConfigs.GetGameStartFile());
     lua_pcall(L, 0, 0, 0);
-
-    Shader bgShader;
-    bgShader.LoadFromSource(vertexShaderSrc, fragmentShaderSrc);
-    mShaders.push_back(bgShader);
 
     constexpr const float vertices[] = {
             1920.0f,  1080.0f, 0.0f,
@@ -111,10 +82,69 @@ void Application::Run()
 
     mVAO = VAO; mVBO = VBO; mEBO = EBO;
 
+    lb::LuaRef StartLabel = lb::getGlobal(L, "label_start");
+    StartLabel();
+
     while (!glfwWindowShouldClose(mWindowProps.window))
     {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        if (NextState && mCurrentIterator != StatementsList.size())
+        {
+            start:
+            switch (StatementsList[mCurrentIterator].command)
+            {
+            case VNStatements::TEXT:
+                std::cout << StatementsList[mCurrentIterator].content << std::endl;
+                break;
+            case VNStatements::SCENE:
+                if (textures.empty() && shaders.empty())
+                {
+                    shaders.push_front(std::make_pair(StatementsList[mCurrentIterator].image, StatementsList[mCurrentIterator].image->GetShader()));
+                    textures.push_front(std::make_pair(StatementsList[mCurrentIterator].image, StatementsList[mCurrentIterator].image->GetTexture()));
+                }
+                else
+                {
+                    shaders.begin()->operator=(std::make_pair(StatementsList[mCurrentIterator].image, StatementsList[mCurrentIterator].image->GetShader()));
+                    textures.begin()->operator=(std::make_pair(StatementsList[mCurrentIterator].image, StatementsList[mCurrentIterator].image->GetTexture()));
+                }
+                mCurrentIterator++;
+                NextState = false;
+                goto start;
+                break;
+            case VNStatements::SHOWSPRITE:
+                shaders.push_back(std::make_pair(StatementsList[mCurrentIterator].image, StatementsList[mCurrentIterator].image->GetShader()));
+                textures.push_back(std::make_pair(StatementsList[mCurrentIterator].image, StatementsList[mCurrentIterator].image->GetTexture()));
+                mCurrentIterator++;
+                NextState = false;
+                goto start;
+            case VNStatements::HIDESPRITE:
+            {
+                const LuaImage* spriteToDelete = std::make_pair(StatementsList[mCurrentIterator].image, StatementsList[mCurrentIterator].image->GetShader()).first;
+                auto shaderIt(shaders.begin());
+                auto textureIt(textures.begin());
+                for (const auto& shader: shaders)
+                {
+                    if (shader.first == spriteToDelete)
+                    {
+                        shaders.erase(shaderIt);
+                        textures.erase(textureIt);
+                        break;
+                    }
+                    shaderIt++;
+                    textureIt++;
+                }
+                mCurrentIterator++;
+                NextState = false;
+                goto start;
+            }
+            default:
+                break;
+            }
+            mCurrentIterator++;
+            NextState = false;
+        }
 
         glfwGetFramebufferSize(mWindowProps.window, &mWindowProps.width, &mWindowProps.height);
 
@@ -126,13 +156,13 @@ void Application::Run()
 
         mVAO.Bind();
 
-        for (short int i = 0; i < mTextures.size() && i < mShaders.size(); ++i)
+        for (int i = 0; i < textures.size() && i < shaders.size(); ++i)
         {
-            mShaders[i].use();
-            mShaders[i].SetUniform<glm::mat4>("uMVP", MVP);
-            mShaders[i].SetUniform<int>("uTextureWidth", mTextures[i].width);
-            mShaders[i].SetUniform<int>("uTextureHeight", mTextures[i].height);
-            mTextures[i].Bind();
+            shaders[i].second.use();
+            shaders[i].second.SetUniform<glm::mat4>("uMVP", MVP);
+            shaders[i].second.SetUniform<int>("uTextureWidth", textures[i].second.width);
+            shaders[i].second.SetUniform<int>("uTextureHeight", textures[i].second.height);
+            textures[i].second.Bind();
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         }
 
