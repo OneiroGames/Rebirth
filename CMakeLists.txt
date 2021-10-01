@@ -10,10 +10,12 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 find_package(OpenGL REQUIRED)
 find_package(Lua51 REQUIRED)
+find_package(Freetype REQUIRED)
 
 include_directories(ThirdParty/)
 include_directories(Source/)
 include_directories(ThirdParty/LBridge/Source/)
+include_directories(${FREETYPE_INCLUDE_DIRS})
 
 file(GLOB RebirthSRC
         "Source/*.h"
@@ -40,6 +42,11 @@ add_executable(${CMAKE_PROJECT_NAME}
 
         ${RebirthSRC}
 
+        Source/Engine/OpenGL/GLTextRenderer.cpp
+        Source/Engine/OpenGL/GLTextRenderer.h
+        Source/Engine/OpenGL/Text.cpp
+        Source/Engine/OpenGL/Text.h
+
         ThirdParty/ImGui/imgui_widgets.cpp
         ThirdParty/ImGui/imgui.cpp
         ThirdParty/ImGui/imgui_draw.cpp
@@ -57,5 +64,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         glad
         glm
         ${LUA_LIBRARIES}
+        ${FREETYPE_LIBRARIES}
         OpenGL::GL
         )

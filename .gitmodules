@@ -16,3 +16,6 @@
 [submodule "ThirdParty/LBridge"]
 	path = ThirdParty/LBridge
 	url = https://github.com/vinniefalco/LuaBridge
+[submodule "ThirdParty/FreeType"]
+	path = ThirdParty/FreeType
+	url = https://github.com/freetype/freetype
