@@ -78,6 +78,11 @@ void Shader::LoadFromPath(const char *vertexShaderPath, const char *fragmentShad
     glDeleteShader(fragmentShader);
 }
 
+void Shader::UnLoad()
+{
+    glDeleteProgram(mShaderID);
+}
+
 unsigned int CreateVertexShader(const char* shaderSrc)
 {
     unsigned int shaderID = glCreateShader(GL_VERTEX_SHADER);

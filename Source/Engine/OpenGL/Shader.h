@@ -17,6 +17,8 @@ public:
     void LoadFromSource(const char* vertexShaderSrc, const char* fragmentShaderSrc);
     inline void use() const { glUseProgram(mShaderID); }
 
+    void UnLoad();
+
     template<class T>
     void SetUniform(const char* uniformName, const T value) const {}
 private:

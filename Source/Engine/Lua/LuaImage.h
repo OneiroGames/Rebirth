@@ -19,11 +19,16 @@ public:
     void show();
     void hide();
 
+    void Load();
+    void UnLoad();
+
     [[nodiscard]] Shader GetShader() const { return mImageShader; }
     [[nodiscard]] Texture GetTexture() const { return mImageTexture; }
 private:
     Shader mImageShader;
     Texture mImageTexture;
+
+    const char* mImagePath;
 };
 
 

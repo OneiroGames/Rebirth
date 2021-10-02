@@ -9,7 +9,7 @@ class Texture
 {
 public:
     Texture();
-    Texture(const char* texturePath);
+    explicit Texture(const char* texturePath);
 
     ~Texture();
 
@@ -18,6 +18,7 @@ public:
     int width, height;
 
     void Load(const char* path);
+    void UnLoad();
 private:
     unsigned int mTextureID;
 };

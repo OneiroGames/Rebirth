@@ -92,3 +92,8 @@ void Texture::Load(const char* path)
     }
     stbi_image_free(data);
 }
+
+void Texture::UnLoad()
+{
+    glDeleteTextures(1, &mTextureID);
+}

@@ -10,11 +10,8 @@ extern std::vector<VNStatementInfo> StatementsList;
 
 LuaImage::LuaImage(const char* path)
 {
-    mImageShader.LoadFromSource(vertexShaderSrc, fragmentShaderSrc);
-    mImageTexture.Load(path);
+    mImagePath = path;
 }
-
-LuaImage::LuaImage() = default;
 
 void LuaImage::show()
 {
@@ -24,4 +21,16 @@ void LuaImage::show()
 void LuaImage::hide()
 {
     StatementsList.push_back({VNStatements::HIDESPRITE, nullptr, this});
+}
+
+void LuaImage::Load()
+{
+    mImageShader.LoadFromSource(vertexShaderSrc, fragmentShaderSrc);
+    mImageTexture.Load(mImagePath);
+}
+
+void LuaImage::UnLoad()
+{
+    mImageShader.UnLoad();
+    mImageTexture.UnLoad();
 }
