@@ -26,3 +26,10 @@ void IndexBuffer::UnBind() const
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
+
+void IndexBuffer::Create(unsigned int size, const unsigned int* pIndices)
+{
+    glGenBuffers(1, &mIndexBufferID);
+    Bind();
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, pIndices, GL_STATIC_DRAW);
+}

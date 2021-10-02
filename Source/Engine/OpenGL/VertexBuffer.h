@@ -10,7 +10,8 @@ class VertexBuffer
 {
 public:
     VertexBuffer() {}
-    VertexBuffer(unsigned int size, const float* pVertices);
+    VertexBuffer(unsigned int size, const float* pVertices, bool dynamic_draw = false);
+    void Create(unsigned int size, const float* pVertices, bool dynamic_draw = false);
     ~VertexBuffer();
 
     void Bind() const;

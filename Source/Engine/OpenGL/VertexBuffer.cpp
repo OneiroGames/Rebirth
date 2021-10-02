@@ -5,13 +5,21 @@
 #include "VertexBuffer.h"
 #include "glad/glad.h"
 
-VertexBuffer::VertexBuffer(unsigned int size, const float* pVertices) : mVertexBufferID(0)
+VertexBuffer::VertexBuffer(unsigned int size, const float* pVertices, bool dynamic_draw) : mVertexBufferID(0)
 {
     glGenBuffers(1, &mVertexBufferID);
     Bind();
 
-    glBufferData(GL_ARRAY_BUFFER, size, pVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, size, pVertices, dynamic_draw ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 }
+void VertexBuffer::Create(unsigned int size, const float* pVertices, bool dynamic_draw)
+{
+    glGenBuffers(1, &mVertexBufferID);
+    Bind();
+
+    glBufferData(GL_ARRAY_BUFFER, size, pVertices, dynamic_draw ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+}
+
 
 VertexBuffer::~VertexBuffer()
 {

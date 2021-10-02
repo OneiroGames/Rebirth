@@ -9,6 +9,7 @@ class IndexBuffer
 {
 public:
     IndexBuffer() {}
+    void Create(unsigned int size, const unsigned int *pIndices);
     IndexBuffer(unsigned int size, const unsigned int *pIndices);
     ~IndexBuffer();
 
