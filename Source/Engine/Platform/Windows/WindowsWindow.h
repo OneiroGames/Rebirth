@@ -7,7 +7,7 @@
 
 #ifdef __MINGW64__
 
-#include "Engine/Core/Platform/Platform.h"
+#include "Engine/Platform/Platform.h"
 
 class WindowHnd
 {
