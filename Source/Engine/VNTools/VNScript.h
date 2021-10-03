@@ -6,12 +6,14 @@
 #ifndef REBIRTH_VNSCRIPT_H
 #define REBIRTH_VNSCRIPT_H
 
-#include "lua5.1/lua.h"
+#include "sol/sol.hpp"
 
 class VNScript
 {
 public:
-    static void Run(lua_State* L);
+    static void Run(sol::state& lua);
+
+    void CreateImg(const char* path);
 };
 
 

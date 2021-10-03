@@ -5,40 +5,38 @@
 #ifndef REBIRTH_CONFIG_H
 #define REBIRTH_CONFIG_H
 
-#include "lua5.1/lua.h"
+#include "sol/sol.hpp"
 
 class Config
 {
 public:
-    Config() : mWindowWidth(1280), mWindowHeight(720), mWindowTitle("Visual Novel"), mGameStartFile("script.lua") {}
+    Config() {}
 public:
-    void Run(lua_State* L);
+    void Run(sol::state& lua);
 
     unsigned int GetWindowWidth() const
     {
-        return mWindowWidth;
+        return mWindowConfigs["width"].get<unsigned int>();
     }
 
     unsigned int GetWindowHeight() const
     {
-        return mWindowHeight;
+        return mWindowConfigs["height"].get<unsigned int>();
     }
 
     const char* GetWindowTitle() const
     {
-        return mWindowTitle;
+        return mWindowConfigs["title"].get<const char*>();
     }
 
     const char* GetGameStartFile() const
     {
-        return mGameStartFile;
+        return "script.lua";
     }
 
 private:
-    const char* mGameStartFile;
-    unsigned int mWindowWidth;
-    unsigned int mWindowHeight;
-    const char* mWindowTitle;
+    sol::table mConfigs;
+    sol::table mWindowConfigs;
 };
 
 

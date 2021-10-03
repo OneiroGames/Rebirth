@@ -4,24 +4,12 @@
 
 #include "Config.h"
 
-#include "lua5.1/lua.h"
-#include "lua5.1/lauxlib.h"
-#include "lua5.1/lualib.h"
-#include "LuaBridge/LuaBridge.h"
-
-namespace lb = luabridge;
-
-void Config::Run(lua_State* L)
+void Config::Run(sol::state& lua)
 {
-    lb::getGlobalNamespace(L)
-    .beginNamespace("config")
-        .beginNamespace("window")
-            .addProperty("width", &mWindowWidth)
-            .addProperty("height", &mWindowHeight)
-            .addProperty("title", &mWindowTitle)
-        .endNamespace()
-        .beginNamespace("game")
-            .addProperty("start", &mGameStartFile)
-        .endNamespace()
-    .endNamespace();
+    mConfigs = lua.create_named_table("config");
+    mWindowConfigs = mConfigs.create_named("window");
+
+    mWindowConfigs["title"] = "Visual Novel";
+    mWindowConfigs["width"] = 1280;
+    mWindowConfigs["height"] = 720;
 }

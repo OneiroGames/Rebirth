@@ -27,12 +27,7 @@
 
 #include "stb/stb_image.h"
 
-#include "lua5.1/lua.h"
-#include "lua5.1/lauxlib.h"
-#include "lua5.1/lualib.h"
-#include "LuaBridge/LuaBridge.h"
-
-namespace lb = luabridge;
+#include "Engine/OpenGL/Text.h"
 
 class Application
 {
@@ -40,16 +35,20 @@ public:
     Application();
     ~Application();
 
+    void Init();
     void Run();
 private:
+    void UpdateLogic();
+    sol::state lua;
     VertexArray mVAO;
     VertexBuffer mVBO;
     IndexBuffer mEBO;
     WindowProperties mWindowProps{};
 
+    Text mTextRender;
     Config mConfigs;
 
-    unsigned short int mCurrentIterator;
+    unsigned short int mCurrentIterator{};
 };
 
 

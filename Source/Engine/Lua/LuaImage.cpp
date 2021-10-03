@@ -3,15 +3,11 @@
 //
 
 #include "LuaImage.h"
+
 extern const char* vertexShaderSrc;
 extern const char* fragmentShaderSrc;
 #include "Engine/Core/Core.h"
 extern std::vector<VNStatementInfo> StatementsList;
-
-LuaImage::LuaImage(const char* path)
-{
-    mImagePath = path;
-}
 
 void LuaImage::show()
 {
