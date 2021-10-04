@@ -16,7 +16,7 @@
 class LuaImage
 {
 public:
-    explicit LuaImage(const char* path) : mImagePath(path) {}
+    explicit LuaImage(const std::string& path) : mImagePath(path) {}
 
     void show();
     void hide();
@@ -26,8 +26,8 @@ public:
 
     [[nodiscard]] Shader GetShader() const { return mImageShader; }
     [[nodiscard]] Texture GetTexture() const { return mImageTexture; }
-    const char* mImagePath;
 private:
+    std::string mImagePath;
     Shader mImageShader;
     Texture mImageTexture;
 };

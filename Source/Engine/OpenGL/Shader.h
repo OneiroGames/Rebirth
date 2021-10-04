@@ -7,6 +7,8 @@
 
 #include "glad/glad.h"
 
+#include <string>
+
 class Shader
 {
 public:
@@ -17,10 +19,10 @@ public:
     void LoadFromSource(const char* vertexShaderSrc, const char* fragmentShaderSrc);
     inline void use() const { glUseProgram(mShaderID); }
 
-    void UnLoad();
+    void UnLoad() const;
 
     template<class T>
-    void SetUniform(const char* uniformName, const T value) const {}
+    void SetUniform(const std::string& uniformName, const T& value) const {}
 private:
     unsigned int mShaderID;
 };

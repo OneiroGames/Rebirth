@@ -11,12 +11,12 @@ extern std::vector<VNStatementInfo> StatementsList;
 
 void LuaImage::show()
 {
-    StatementsList.push_back({VNStatements::SHOWSPRITE, nullptr, this});
+    StatementsList.push_back({VNStatements::SHOWSPRITE, {}, this});
 }
 
 void LuaImage::hide()
 {
-    StatementsList.push_back({VNStatements::HIDESPRITE, nullptr, this});
+    StatementsList.push_back({VNStatements::HIDESPRITE, {}, this});
 }
 
 void LuaImage::Load()

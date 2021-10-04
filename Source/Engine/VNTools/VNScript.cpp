@@ -9,14 +9,14 @@ extern std::vector<VNStatementInfo> StatementsList;
 
 #include "Engine/Lua/LuaImage.h"
 
-void text(const char* text)
+void text(const std::string& text)
 {
     StatementsList.push_back({VNStatements::TEXT, text});
 }
 
 void scene(LuaImage* img)
 {
-    StatementsList.push_back({VNStatements::SCENE, nullptr, img});
+    StatementsList.push_back({VNStatements::SCENE, {}, img});
 }
 
 void VNScript::Run(sol::state& lua)

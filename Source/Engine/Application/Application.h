@@ -20,7 +20,7 @@
 #include "Engine/OpenGL/VertexBufferLayout.h"
 #include "Engine/OpenGL/IndexBuffer.h"
 #include "Engine/OpenGL/Texture.h"
-#include "Config.h"
+#include "Engine/Lua/LuaConfig.h"
 
 #include "glm/glm/glm.hpp"
 #include "glm/glm/gtc/matrix_transform.hpp"
@@ -38,7 +38,6 @@ public:
     void Init();
     void Run();
 private:
-    void UpdateLogic();
     sol::state lua;
     VertexArray mVAO;
     VertexBuffer mVBO;
@@ -46,7 +45,7 @@ private:
     WindowProperties mWindowProps{};
 
     Text mTextRender;
-    Config mConfigs;
+    LuaConfig mConfigs;
 
     unsigned short int mCurrentIterator{};
 };

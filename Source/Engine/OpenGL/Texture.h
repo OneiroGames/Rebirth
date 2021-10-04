@@ -9,7 +9,7 @@ class Texture
 {
 public:
     Texture();
-    explicit Texture(const char* texturePath);
+    explicit Texture(const std::string& texturePath);
 
     ~Texture();
 
@@ -17,7 +17,7 @@ public:
     void UnBind() const;
     int width, height;
 
-    void Load(const char* path);
+    void Load(const std::string& path);
     void UnLoad();
 private:
     unsigned int mTextureID;

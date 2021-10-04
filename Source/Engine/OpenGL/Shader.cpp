@@ -37,7 +37,7 @@ void Shader::LoadFromSource(const char* vertexShaderSrc, const char* fragmentSha
     glDeleteShader(fragment);
 }
 
-void Shader::LoadFromPath(const char *vertexShaderPath, const char *fragmentShaderPath)
+void Shader::LoadFromPath(const char* vertexShaderPath, const char* fragmentShaderPath)
 {
     std::string vertexShaderSrc;
     std::string fragmentShaderSrc;
@@ -78,7 +78,7 @@ void Shader::LoadFromPath(const char *vertexShaderPath, const char *fragmentShad
     glDeleteShader(fragmentShader);
 }
 
-void Shader::UnLoad()
+void Shader::UnLoad() const
 {
     glDeleteProgram(mShaderID);
 }
@@ -145,25 +145,25 @@ void CheckCompileErrors(unsigned int shader, const char* type)
 }
 
 template<>
-void Shader::SetUniform<float>(const char* uniformName, const float value) const
+void Shader::SetUniform<float>(const std::string& uniformName, const float& value) const
 {
-    glUniform1f(glGetUniformLocation(mShaderID, uniformName), value);
+    glUniform1f(glGetUniformLocation(mShaderID, uniformName.c_str()), value);
 }
 
 template<>
-void Shader::SetUniform<int>(const char* uniformName, const int value) const
+void Shader::SetUniform<int>(const std::string& uniformName, const int& value) const
 {
-    glUniform1i(glGetUniformLocation(mShaderID, uniformName), value);
+    glUniform1i(glGetUniformLocation(mShaderID, uniformName.c_str()), value);
 }
 
 template<>
-void Shader::SetUniform<glm::vec3>(const char* uniformName, const glm::vec3 value) const
+void Shader::SetUniform<glm::vec3>(const std::string& uniformName, const glm::vec3& value) const
 {
-    glUniform3fv(glGetUniformLocation(mShaderID, uniformName), 1, &value[0]);
+    glUniform3fv(glGetUniformLocation(mShaderID, uniformName.c_str()), 1, &value[0]);
 }
 
 template<>
-void Shader::SetUniform<glm::mat4>(const char* uniformName, const glm::mat4 value) const
+void Shader::SetUniform<glm::mat4>(const std::string& uniformName, const glm::mat4& value) const
 {
-    glUniformMatrix4fv(glGetUniformLocation(mShaderID, uniformName), 1, GL_FALSE, &value[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(mShaderID, uniformName.c_str()), 1, GL_FALSE, &value[0][0]);
 }

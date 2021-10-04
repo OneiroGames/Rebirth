@@ -22,8 +22,8 @@ enum class VNStatements
 struct VNStatementInfo
 {
     const VNStatements command;
-    const char* content;
-    const LuaImage* image;
+    std::string content;
+    LuaImage* image;
 };
 
 #endif //REBIRTH_CORE_H

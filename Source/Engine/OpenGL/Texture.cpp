@@ -17,10 +17,10 @@ Texture::~Texture()
 {
 }
 
-Texture::Texture(const char* texturePath)
+Texture::Texture(const std::string& texturePath)
 {
     int nrChannels;
-    unsigned char* data = stbi_load(texturePath, &width, &height, &nrChannels, 0);
+    unsigned char* data = stbi_load(texturePath.c_str(), &width, &height, &nrChannels, 0);
 
     if (data)
     {
@@ -60,10 +60,10 @@ void Texture::UnBind() const
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::Load(const char* path)
+void Texture::Load(const std::string& path)
 {
     int nrChannels;
-    unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0);
+    unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
 
     if (data)
     {

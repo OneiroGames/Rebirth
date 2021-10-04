@@ -179,9 +179,8 @@ void Application::Run()
 void Application::Init()
 {
     lua.open_libraries(sol::lib::base);
-    mConfigs.Run(lua);
-    lua.do_file("config.lua");
-    mWindowProps = WindowHnd::CreateWindow(mConfigs.GetWindowWidth(), mConfigs.GetWindowHeight(), mConfigs.GetWindowTitle());
+    mConfigs.Run(lua, "config.lua");
+    mWindowProps = WindowHnd::CreateWindow(mConfigs.GetWindowWidth(), mConfigs.GetWindowHeight(), mConfigs.GetWindowTitle().c_str());
 
     glfwSetMouseButtonCallback(mWindowProps.window, mouse_button_callback);
     stbi_set_flip_vertically_on_load(true);
