@@ -2,9 +2,9 @@
 // Created by dezlow on 28.09.2021.
 //
 
-#include "Config.h"
+#include "LuaConfig.h"
 
-void Config::Run(sol::state& lua)
+void LuaConfig::Run(sol::state& lua, const std::string& cfgFile)
 {
     mConfigs = lua.create_named_table("config");
     mWindowConfigs = mConfigs.create_named("window");
@@ -12,4 +12,6 @@ void Config::Run(sol::state& lua)
     mWindowConfigs["title"] = "Visual Novel";
     mWindowConfigs["width"] = 1280;
     mWindowConfigs["height"] = 720;
+
+    lua.do_file(cfgFile);
 }
