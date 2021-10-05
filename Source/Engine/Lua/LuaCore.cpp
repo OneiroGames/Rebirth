@@ -1,9 +1,9 @@
 //
-// Created by dezlow on 28.09.2021.
+// Created by dezlow on 05.10.2021.
 //
 
 #include <vector>
-#include "VNScript.h"
+#include "LuaCore.h"
 #include "Engine/Core/Core.h"
 extern std::vector<VNStatementInfo> StatementsList;
 
@@ -19,7 +19,7 @@ void scene(LuaImage* img)
     StatementsList.push_back({VNStatements::SCENE, {}, img});
 }
 
-void VNScript::Run(sol::state& lua)
+void LuaCore::Run(sol::state& lua)
 {
     auto rebirth = lua.create_named_table("rebirth");
     rebirth.set_function("DisplayText", text);
@@ -67,3 +67,4 @@ void VNScript::Run(sol::state& lua)
                "    rebirth.DisplayText(self.charname .. \": \" .. text)\n"
                "end");
 }
+

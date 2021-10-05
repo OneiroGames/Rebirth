@@ -27,8 +27,6 @@ file(GLOB RebirthSRC
         "Source/Engine/OpenGL/*.cpp"
         "Source/Engine/Application/Application.cpp"
         "Source/Engine/Application/Application.h"
-        "Source/Engine/VNTools/*.cpp"
-        "Source/Engine/VNTools/*.h"
         "Source/Engine/Core/*.cpp"
         "Source/Engine/Core/*.h"
         "Source/Engine/Lua/*.cpp"
