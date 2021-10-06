@@ -10,16 +10,22 @@
 #include "Engine/OpenGL/Texture.h"
 
 #include <iostream>
+#include <utility>
 
 #include "sol/sol.hpp"
 
 class LuaImage
 {
 public:
-    explicit LuaImage(const std::string& path) : mImagePath(path) {}
+    explicit LuaImage(std::string path) : mImagePath(std::move(path)) {}
 
     void show();
     void hide();
+
+    [[nodiscard]] bool IsSprite() const { return mIsSprite; }
+    [[nodiscard]] float GetCurrentAlpha() const { return mCurrentAlpha; }
+
+    void SetAlpha(const float& alpha) { mImageShader.SetUniform<float>("uTextureAlpha", alpha); mCurrentAlpha = alpha; }
 
     void Load();
     void UnLoad();
@@ -27,6 +33,10 @@ public:
     [[nodiscard]] Shader GetShader() const { return mImageShader; }
     [[nodiscard]] Texture GetTexture() const { return mImageTexture; }
 private:
+    bool mIsSprite = false;
+
+    float mCurrentAlpha = 0.0f;
+
     std::string mImagePath;
     Shader mImageShader;
     Texture mImageTexture;

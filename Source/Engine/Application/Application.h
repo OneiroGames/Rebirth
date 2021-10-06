@@ -44,6 +44,11 @@ private:
     IndexBuffer mEBO;
     WindowProperties mWindowProps{};
 
+    std::vector<uint8_t> mSprIDsRemove;
+    std::vector<uint8_t> mSprIDsShow;
+    uint8_t mBgIDRemove{};
+
+
     Text mTextRender;
     LuaConfig mConfigs;
 

@@ -29,12 +29,14 @@ const char* fragmentShaderSrc = R"(
 
         in vec2 TexCoords;
 
+        uniform float uTextureAlpha;
+
         void main()
         {
             vec4 Texture = texture2D(uTexture, vec2(TexCoords.x / uTextureWidth, TexCoords.y / uTextureHeight));
             if(Texture.a < 0.1)
 					discard;
-            FragColor = Texture;
+            FragColor = vec4(Texture.rgb, uTextureAlpha);
         }
     )";
 
