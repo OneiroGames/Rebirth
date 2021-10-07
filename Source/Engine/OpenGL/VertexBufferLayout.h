@@ -5,12 +5,13 @@
 #ifndef REBIRTH_VERTEXBUFFERLAYOUT_H
 #define REBIRTH_VERTEXBUFFERLAYOUT_H
 
+#include <cstdint>
 
 class VertexBufferLayout
 {
 public:
     template<class T>
-    static void Push(unsigned int id, unsigned int size, unsigned int stride, unsigned int pointer) {}
+    static void Push(const uint32_t& id, const uint32_t& size, const uint32_t& stride, const uint32_t& pointer) {}
 };
 
 

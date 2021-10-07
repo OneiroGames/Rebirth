@@ -5,7 +5,7 @@
 #include "IndexBuffer.h"
 #include "glad/glad.h"
 
-IndexBuffer::IndexBuffer(unsigned int size, const unsigned int *pIndices)
+IndexBuffer::IndexBuffer(const uint32_t& size, const uint32_t *pIndices)
 {
     glGenBuffers(1, &mIndexBufferID);
     Bind();
@@ -27,7 +27,7 @@ void IndexBuffer::UnBind() const
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void IndexBuffer::Create(unsigned int size, const unsigned int* pIndices)
+void IndexBuffer::Create(const uint32_t& size, const uint32_t* pIndices)
 {
     glGenBuffers(1, &mIndexBufferID);
     Bind();

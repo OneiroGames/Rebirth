@@ -20,7 +20,7 @@ Texture::~Texture()
 Texture::Texture(const std::string& texturePath)
 {
     int nrChannels;
-    unsigned char* data = stbi_load(texturePath.c_str(), &width, &height, &nrChannels, 0);
+    uint8_t* data = stbi_load(texturePath.c_str(), &width, &height, &nrChannels, 0);
 
     if (data)
     {

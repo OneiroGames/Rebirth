@@ -5,6 +5,7 @@
 #ifndef REBIRTH_LUACONFIG_H
 #define REBIRTH_LUACONFIG_H
 
+#define SOL_ALL_SAFETIES_ON 1
 #include "sol/sol.hpp"
 
 class LuaConfig
@@ -14,14 +15,14 @@ public:
 public:
     void Run(sol::state& lua, const std::string& cfgFile);
 
-    [[nodiscard]] unsigned int GetWindowWidth() const
+    [[nodiscard]] uint32_t GetWindowWidth() const
     {
-        return mWindowConfigs["width"].get<unsigned int>();
+        return mWindowConfigs["width"].get<uint32_t>();
     }
 
-    [[nodiscard]] unsigned int GetWindowHeight() const
+    [[nodiscard]] uint32_t GetWindowHeight() const
     {
-        return mWindowConfigs["height"].get<unsigned int>();
+        return mWindowConfigs["height"].get<uint32_t>();
     }
 
     [[nodiscard]] std::string GetWindowTitle() const

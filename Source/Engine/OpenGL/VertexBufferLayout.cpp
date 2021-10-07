@@ -6,7 +6,7 @@
 #include "glad/glad.h"
 
 template<>
-void VertexBufferLayout::Push<float>(unsigned int id, unsigned int size, unsigned int stride, unsigned int pointer)
+void VertexBufferLayout::Push<float>(const uint32_t& id, const uint32_t& size, const uint32_t& stride, const uint32_t& pointer)
 {
     glEnableVertexAttribArray(id);
     glVertexAttribPointer(id, (int)size, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)pointer);

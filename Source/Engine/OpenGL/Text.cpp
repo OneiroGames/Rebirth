@@ -6,6 +6,8 @@
 
 void Text::Init(const char* fontPath, unsigned int charsSize)
 {
+    mCharSize = charsSize;
+
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glBindVertexArray(VAO);
@@ -156,15 +158,14 @@ void Text::Render(const glm::mat4 MVP, float x, float y)
     std::string::iterator c;
     float xpos = 0.0f, ypos = 0.0f;
     float tempx = x;
-    Character ch;
-    int i = 0;
+    Character ch{};
     for (c = mTextToRender.begin(); c != mTextToRender.end(); c++)
     {
         if (*c == '\n')
         {
-            y -= 30.5;
             x = tempx;
-            c++;
+            y -= mCharSize * 1.1;
+            continue;
         }
 
         ch = mCharacters[*c];
@@ -195,7 +196,6 @@ void Text::Render(const glm::mat4 MVP, float x, float y)
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         x += (ch.Advance >> 6) * 1.0f - 2;
-        i++;
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);

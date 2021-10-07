@@ -12,8 +12,6 @@
 #include "Engine/Platform/Linux/LinuxWindow.h"
 #endif
 
-#include <deque>
-
 #include "Engine/OpenGL/Shader.h"
 #include "Engine/OpenGL/VertexArray.h"
 #include "Engine/OpenGL/VertexBuffer.h"
@@ -48,11 +46,12 @@ private:
     std::vector<uint8_t> mSprIDsShow;
     uint8_t mBgIDRemove{};
 
+    void NextStatement();
 
     Text mTextRender;
     LuaConfig mConfigs;
 
-    unsigned short int mCurrentIterator{};
+    uint16_t mCurrentIterator{};
 };
 
 

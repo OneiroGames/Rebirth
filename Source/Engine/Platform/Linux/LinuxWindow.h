@@ -12,7 +12,7 @@
 class WindowHnd
 {
 public:
-    static WindowProperties CreateWindow(unsigned int width, unsigned int height, const char* title);
+    static WindowProperties CreateWindow(const uint32_t& width, const uint32_t& height, const char* title);
 };
 
 #endif

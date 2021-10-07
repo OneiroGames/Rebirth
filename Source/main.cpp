@@ -7,6 +7,7 @@
 int main()
 {
     auto* app = new Application;
+
     app->Init();
     app->Run();
 

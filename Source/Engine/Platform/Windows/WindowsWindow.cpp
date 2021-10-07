@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include "WindowsWindow.h"
 
-WindowProperties WindowHnd::CreateWindow(unsigned int width, unsigned int height, const char* title)
+WindowProperties WindowHnd::CreateWindow(const uint32_t& width, const uint32_t& height, const char* title)
 {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

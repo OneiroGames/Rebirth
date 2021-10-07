@@ -5,18 +5,20 @@
 #ifndef REBIRTH_INDEXBUFFER_H
 #define REBIRTH_INDEXBUFFER_H
 
+#include <cstdint>
+
 class IndexBuffer
 {
 public:
-    IndexBuffer() {}
-    void Create(unsigned int size, const unsigned int *pIndices);
-    IndexBuffer(unsigned int size, const unsigned int *pIndices);
+    IndexBuffer() = default;
+    void Create(const uint32_t& size, const uint32_t *pIndices);
+    IndexBuffer(const uint32_t& size, const uint32_t *pIndices);
     ~IndexBuffer();
 
     void Bind() const;
     void UnBind() const;
 private:
-    unsigned int mIndexBufferID;
+    uint32_t mIndexBufferID{};
 };
 
 

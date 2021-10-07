@@ -22,10 +22,10 @@
 #include FT_FREETYPE_H
 
 struct Character {
-    unsigned int TextureID;
+    uint32_t TextureID;
     glm::ivec2   Size;
     glm::ivec2   Bearing;
-    unsigned int Advance;
+    uint32_t Advance;
 };
 
 class Text
@@ -33,7 +33,7 @@ class Text
 public:
     Text() = default;
 
-    void Init(const char* fontPath, unsigned int charsSize = 40);
+    void Init(const char* fontPath, uint32_t charsSize = 40);
 
     void Render(glm::mat4 MVP, float x, float y);
     void SetString(const std::string& text) { mText = text; }
@@ -51,7 +51,9 @@ private:
 
     Shader mShader;
 
-    unsigned int VAO{}, VBO{}, mTextCurrentIterator{};
+    uint32_t VAO{}, VBO{}, mTextCurrentIterator{};
+
+    uint32_t mCharSize{};
 
     std::map<char, Character> mCharacters;
 };

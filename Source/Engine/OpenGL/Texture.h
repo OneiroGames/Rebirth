@@ -5,6 +5,9 @@
 #ifndef REBIRTH_TEXTURE_H
 #define REBIRTH_TEXTURE_H
 
+
+#include <cstdint>
+
 class Texture
 {
 public:
@@ -15,12 +18,13 @@ public:
 
     void Bind() const;
     void UnBind() const;
+
     int width, height;
 
     void Load(const std::string& path);
     void UnLoad();
 private:
-    unsigned int mTextureID;
+    uint32_t mTextureID;
 };
 
 

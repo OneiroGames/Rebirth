@@ -6,8 +6,6 @@
 #include "Engine/Lua/LuaCore.h"
 #include "Engine/Core/Core.h"
 extern std::vector<VNStatementInfo> StatementsList;
-extern const char* vertexShaderSrc;
-extern const char* fragmentShaderSrc;
 extern std::deque<std::pair<LuaImage*, Shader>> shaders;
 extern std::deque<std::pair<LuaImage*, Texture>> textures;
 
@@ -28,7 +26,7 @@ void Application::Run()
     bool skip = false;
 
     mTextRender.Init("font.ttf");
-    float timerToNextChar = 0.05f;
+    float timerToNextChar = 0.01f;
 
     float currentAlpha = 0.0f;
 
@@ -37,7 +35,6 @@ void Application::Run()
     bool ReDissolveEffectSprite = false;
 
     float currentReAlpha = 1.0f;
-    uint32_t tempLastSpriteID = 0;
 
     while (!glfwWindowShouldClose(mWindowProps.window))
     {
@@ -50,14 +47,8 @@ void Application::Run()
 
         first = glfwGetTime();
 
-        if (DissolveEffect && NextState && currentAlpha < 1.0f && mCurrentIterator > 0)
+        if (DissolveEffect || ReDissolveEffect || ReDissolveEffectSprite && NextState)
         {
-            currentAlpha = 1.0f;
-            NextState = false;
-        }
-        if (ReDissolveEffect && NextState && currentReAlpha > 0.0f)
-        {
-            currentReAlpha = 0.0f;
             NextState = false;
         }
 
@@ -91,41 +82,7 @@ void Application::Run()
             }
         }
 
-        if (NextState && mCurrentIterator != StatementsList.size())
-        {
-            start:
-            if (mCurrentIterator >= StatementsList.size()) goto end;
-
-            switch (StatementsList[mCurrentIterator].command)
-            {
-            case VNStatements::TEXT:
-                mTextRender.ClearTextToRender();
-                mTextRender.SetString(StatementsList[mCurrentIterator].content);
-                break;
-            case VNStatements::SCENE:
-                mBgIDRemove = mCurrentIterator;
-                mCurrentIterator++;
-                NextState = false;
-                goto start;
-            case VNStatements::SHOWSPRITE:
-                mSprIDsShow.push_back(mCurrentIterator);
-                mCurrentIterator++;
-                NextState = false;
-                goto start;
-            case VNStatements::HIDESPRITE:
-            {
-                mSprIDsRemove.push_back(mCurrentIterator);
-                mCurrentIterator++;
-                NextState = false;
-                goto start;
-            }
-            default:
-                break;
-            }
-            mCurrentIterator++;
-            end:
-            NextState = false;
-        }
+        NextStatement();
 
         glfwGetFramebufferSize(mWindowProps.window, &mWindowProps.width, &mWindowProps.height);
 
@@ -139,28 +96,55 @@ void Application::Run()
         {
             if (!textures[0].first->IsSprite() && mBgIDRemove > 0)
             {
-                if (ReDissolveEffect)
+                if (ReDissolveEffect && currentReAlpha > 0.0f)
                 {
-                    currentReAlpha -= 1.5f * (float)deltaTime;
+                    currentReAlpha -= 0.65f * (float)deltaTime;
                 }
                 ReDissolveEffect = true;
 
                 for (uint32_t i = 0; i < shaders.size(); i++)
                 {
-                    if (shaders[i].first->GetCurrentAlpha() <= 0.0f)
+                    if (shaders[0].first->GetCurrentAlpha() <= 0.0f)
                     {
-                        shaders[i].first->UnLoad();
+                        for (auto& sh : shaders)
+                        {
+                            sh.first->UnLoad();
+                        }
                         ReDissolveEffect = false;
                     }
                     else
                     {
                         shaders[i].second.use();
-                        shaders[i].first->SetAlpha(currentReAlpha);
+                        if (i != 0 && shaders[i].first->IsSprite())
+                        {
+                            shaders[i].first->SetAlpha(currentReAlpha - ((float)deltaTime * 32));
+                            continue;
+                        }
+                        else if (i == 0 && !shaders[0].first->IsSprite())
+                        {
+                            if (shaders.size() <= 1)
+                            {
+                                shaders[0].first->SetAlpha(currentReAlpha);
+                            }
+                            else if (shaders[shaders.size() - 1].first->GetCurrentAlpha() <= 0.0f)
+                            {
+                                if (currentReAlpha <= 0.0f && shaders[0].first->GetCurrentAlpha() >= 1.0f)
+                                {
+                                    currentReAlpha = 1.0f;
+                                }
+                                shaders[0].first->SetAlpha(currentReAlpha);
+                            }
+                        }
                     }
                 }
 
                 if (!ReDissolveEffect)
                 {
+                    for (auto& sh : shaders)
+                    {
+                        sh.first->UnLoad();
+                    }
+
                     shaders.clear();
                     textures.clear();
 
@@ -175,7 +159,7 @@ void Application::Run()
             {
                 if (ReDissolveEffectSprite)
                 {
-                    currentReAlpha -= 2.0f * (float)deltaTime;
+                    currentReAlpha -= 2.5f * (float)deltaTime;
                 }
                 ReDissolveEffectSprite = true;
 
@@ -205,8 +189,6 @@ void Application::Run()
                         StatementsList[SpriteRemoveID].image->GetShader().use();
                         StatementsList[SpriteRemoveID].image->SetAlpha(currentReAlpha);
                     }
-
-                    tempLastSpriteID = lastSpriteID;
                     lastSpriteID = SpriteRemoveID;
                 }
 
@@ -229,7 +211,6 @@ void Application::Run()
                                 textureIt->first->UnLoad();
                                 shaders.erase(shaderIt);
                                 textures.erase(textureIt);
-                                break;
                             }
                             shaderIt++;
                             textureIt++;
@@ -237,7 +218,6 @@ void Application::Run()
                     }
                     mSprIDsRemove.clear();
                     currentReAlpha = 1.0f;
-                    tempLastSpriteID = 0;
                     ReDissolveEffectSprite = false;
                 }
             }
@@ -290,7 +270,7 @@ void Application::Run()
                     if (i > 0 && textures[i - 1].first->GetCurrentAlpha() >= 1.0f && textures[i].first->IsSprite())
                     {
                         DissolveEffect = true;
-                        currentAlpha += 3.0f * (float) deltaTime;
+                        currentAlpha += 3.5f * (float) deltaTime;
                         textures[i].first->SetAlpha(currentAlpha);
 
                         if (textures[i].first->GetCurrentAlpha() >= 1.0f)
@@ -306,7 +286,7 @@ void Application::Run()
                     else if (!textures[i].first->IsSprite())
                     {
                         DissolveEffect = true;
-                        currentAlpha += 0.55f * (float) deltaTime;
+                        currentAlpha += 0.65f * (float) deltaTime;
                         textures[i].first->SetAlpha(currentAlpha);
 
                         if (textures[i].first->GetCurrentAlpha() >= 1.0f)
@@ -337,9 +317,6 @@ void Application::Run()
         glfwPollEvents();
     }
 }
-
-#define SOL_ALL_SAFETIES_ON 1
-#include "sol/sol.hpp"
 
 void Application::Init()
 {
@@ -389,6 +366,45 @@ void Application::Init()
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void Application::NextStatement()
+{
+    if (NextState && mCurrentIterator != StatementsList.size())
+    {
+        start:
+        if (mCurrentIterator >= StatementsList.size()) goto end;
+
+        switch (StatementsList[mCurrentIterator].command)
+        {
+        case VNStatements::TEXT:
+            mTextRender.ClearTextToRender();
+            mTextRender.SetString(StatementsList[mCurrentIterator].content);
+            break;
+        case VNStatements::SCENE:
+            mBgIDRemove = mCurrentIterator;
+            mCurrentIterator++;
+            NextState = false;
+            goto start;
+        case VNStatements::SHOWSPRITE:
+            mSprIDsShow.push_back(mCurrentIterator);
+            mCurrentIterator++;
+            NextState = false;
+            goto start;
+        case VNStatements::HIDESPRITE:
+        {
+            mSprIDsRemove.push_back(mCurrentIterator);
+            mCurrentIterator++;
+            NextState = false;
+            goto start;
+        }
+        default:
+            break;
+        }
+        mCurrentIterator++;
+        end:
+        NextState = false;
+    }
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)

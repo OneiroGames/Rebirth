@@ -24,7 +24,7 @@ public:
     template<class T>
     void SetUniform(const std::string& uniformName, const T& value) const {}
 private:
-    unsigned int mShaderID;
+    uint32_t mShaderID;
 };
 
 

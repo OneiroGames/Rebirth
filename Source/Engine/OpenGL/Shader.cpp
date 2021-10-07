@@ -10,8 +10,8 @@
 
 unsigned int CreateVertexShader(const char* shaderSrc);
 unsigned int CreateFragmentShader(const char* shaderSrc);
-unsigned int CreateProgram(unsigned int& vertexShaderID, unsigned int& fragmentShaderID);
-void CheckCompileErrors(unsigned int shader, const char* type);
+uint32_t CreateProgram(const uint32_t& vertexShaderID, const uint32_t& fragmentShaderID);
+void CheckCompileErrors(const uint32_t& shader, const char* type);
 
 void Shader::LoadFromSource(const char* vertexShaderSrc, const char* fragmentShaderSrc)
 {
@@ -85,7 +85,7 @@ void Shader::UnLoad() const
 
 unsigned int CreateVertexShader(const char* shaderSrc)
 {
-    unsigned int shaderID = glCreateShader(GL_VERTEX_SHADER);
+    uint32_t shaderID = glCreateShader(GL_VERTEX_SHADER);
 
     glShaderSource(shaderID, 1, &shaderSrc, nullptr);
     glCompileShader(shaderID);
@@ -94,9 +94,9 @@ unsigned int CreateVertexShader(const char* shaderSrc)
     return shaderID;
 }
 
-unsigned int CreateFragmentShader(const char* shaderSrc)
+uint32_t CreateFragmentShader(const char* shaderSrc)
 {
-    unsigned int shaderID = glCreateShader(GL_FRAGMENT_SHADER);
+    uint32_t shaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
     glShaderSource(shaderID, 1, &shaderSrc, nullptr);
     glCompileShader(shaderID);
@@ -105,9 +105,9 @@ unsigned int CreateFragmentShader(const char* shaderSrc)
     return shaderID;
 }
 
-unsigned int CreateProgram(unsigned int& vertexShaderID, unsigned int& fragmentShaderID)
+uint32_t CreateProgram(const uint32_t& vertexShaderID, const uint32_t& fragmentShaderID)
 {
-    unsigned int programID = glCreateProgram();
+    uint32_t programID = glCreateProgram();
 
     glAttachShader(programID, vertexShaderID);
     glAttachShader(programID, fragmentShaderID);
@@ -117,7 +117,7 @@ unsigned int CreateProgram(unsigned int& vertexShaderID, unsigned int& fragmentS
     return programID;
 }
 
-void CheckCompileErrors(unsigned int shader, const char* type)
+void CheckCompileErrors(const uint32_t& shader, const char* type)
 {
     int succes;
     char infoLog[512];

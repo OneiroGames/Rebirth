@@ -6,10 +6,12 @@
 #define REBIRTH_VERTEXARRAY_H
 
 
+#include <cstdint>
+
 class VertexArray
 {
 public:
-    VertexArray() {}
+    VertexArray() = default;
     ~VertexArray();
 
     void Init();
@@ -17,7 +19,7 @@ public:
     void Bind() const;
     void UnBind() const;
 private:
-    unsigned int mVertexArrayID;
+    uint32_t mVertexArrayID{};
 };
 
 
