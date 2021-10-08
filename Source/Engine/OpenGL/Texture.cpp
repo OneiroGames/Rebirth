@@ -9,14 +9,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
-Texture::Texture()
-{
-}
-
-Texture::~Texture()
-{
-}
-
 Texture::Texture(const std::string& texturePath)
 {
     int nrChannels;

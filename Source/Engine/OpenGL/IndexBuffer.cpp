@@ -5,13 +5,6 @@
 #include "IndexBuffer.h"
 #include "glad/glad.h"
 
-IndexBuffer::IndexBuffer(const uint32_t& size, const uint32_t *pIndices)
-{
-    glGenBuffers(1, &mIndexBufferID);
-    Bind();
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, pIndices, GL_STATIC_DRAW);
-}
-
 IndexBuffer::~IndexBuffer()
 {
     glDeleteBuffers(1, &mIndexBufferID);

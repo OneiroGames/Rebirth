@@ -12,7 +12,7 @@
 class Shader
 {
 public:
-    Shader() : mShaderID(0) {}
+    Shader() = default;
     ~Shader() = default;
 
     void LoadFromPath(const char* vertexShaderPath, const char* fragmentShaderPath);
@@ -24,7 +24,7 @@ public:
     template<class T>
     void SetUniform(const std::string& uniformName, const T& value) const {}
 private:
-    uint32_t mShaderID;
+    uint32_t mShaderID{};
 };
 
 

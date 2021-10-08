@@ -11,10 +11,10 @@
 class Texture
 {
 public:
-    Texture();
-    explicit Texture(const std::string& texturePath);
+    Texture() = default;
+    ~Texture() = default;
 
-    ~Texture();
+    explicit Texture(const std::string& texturePath);
 
     void Bind() const;
     void UnBind() const;

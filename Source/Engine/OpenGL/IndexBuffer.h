@@ -12,7 +12,6 @@ class IndexBuffer
 public:
     IndexBuffer() = default;
     void Create(const uint32_t& size, const uint32_t *pIndices);
-    IndexBuffer(const uint32_t& size, const uint32_t *pIndices);
     ~IndexBuffer();
 
     void Bind() const;
