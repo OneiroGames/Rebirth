@@ -33,14 +33,17 @@ class Text
 public:
     Text() = default;
 
-    void Init(const char* fontPath, uint32_t charsSize = 40);
+    void Init(const char* fontPath, uint32_t charsSize = 32);
 
-    void Render(glm::mat4 MVP, float x, float y);
+    void Render(glm::mat4 MVP, float x, float y, glm::vec3 color = glm::vec3(1.0f, 0.4f, 0.1f));
     void SetString(const std::string& text) { mText = text; }
     void DisplayNextChar();
     bool isShowAllText() { return mTextToRender.size() == mText.size(); }
     void DisplayAllText() { mTextToRender = mText; mTextCurrentIterator = mText.size(); }
     void ClearTextToRender() { mTextToRender.clear(); mTextCurrentIterator = 0; }
+
+    float gtx() { return tx; }
+    float gty() { return ty; };
 private:
     void InitFreeType(FT_Library* ft, const char* fontPath, FT_Face& face, unsigned int charSize);
     VertexArray mVAO;
@@ -54,6 +57,9 @@ private:
     uint32_t VAO{}, VBO{}, mTextCurrentIterator{};
 
     uint32_t mCharSize{};
+
+    float tx;
+    float ty;
 
     std::map<char, Character> mCharacters;
 };

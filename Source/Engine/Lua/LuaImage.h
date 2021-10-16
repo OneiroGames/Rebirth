@@ -8,6 +8,7 @@
 
 #include "Engine/OpenGL/Shader.h"
 #include "Engine/OpenGL/Texture.h"
+#include "Engine/OpenGL/Transition.h"
 
 #include <utility>
 
@@ -17,7 +18,7 @@
 class LuaImage
 {
 public:
-    explicit LuaImage(std::string path) : mImagePath(std::move(path)) {}
+    explicit LuaImage(std::string path) : mImagePath(std::move(path)) { mImageTransition.SetImage(this); }
 
     void show();
     void hide();
@@ -30,16 +31,23 @@ public:
     void Load();
     void UnLoad();
 
-    [[nodiscard]] Shader GetShader() const { return mImageShader; }
-    [[nodiscard]] Texture GetTexture() const { return mImageTexture; }
+    [[nodiscard]] Shader* GetShader() { return &mImageShader; }
+    [[nodiscard]] Texture* GetTexture() { return &mImageTexture; }
+    Transition* GetTransition() { return &mImageTransition; }
+
+    bool isLoaded() { return mImageLoaded; }
 private:
     bool mIsSprite = false;
+
+    Transition mImageTransition;
 
     float mCurrentAlpha = 0.0f;
 
     std::string mImagePath;
     Shader mImageShader;
     Texture mImageTexture;
+
+    bool mImageLoaded = false;
 };
 
 

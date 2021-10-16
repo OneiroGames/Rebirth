@@ -146,11 +146,11 @@ void Text::Init(const char* fontPath, unsigned int charsSize)
     FT_Done_FreeType(ft);
 }
 
-void Text::Render(const glm::mat4 MVP, float x, float y)
+void Text::Render(const glm::mat4 MVP, float x, float y, glm::vec3 color)
 {
     mShader.use();
     mShader.SetUniform<glm::mat4>("MVP", MVP);
-    mShader.SetUniform<glm::vec3>("textColor", glm::vec3(1.0f, 0.4f, 0.1f));
+    mShader.SetUniform<glm::vec3>("textColor", color);
 
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
@@ -199,6 +199,9 @@ void Text::Render(const glm::mat4 MVP, float x, float y)
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
+
+    tx = x;
+    ty = y;
 }
 
 void Text::DisplayNextChar()

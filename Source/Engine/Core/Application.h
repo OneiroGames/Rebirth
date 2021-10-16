@@ -5,7 +5,6 @@
 #ifndef REBIRTH_APPLICATION_H
 #define REBIRTH_APPLICATION_H
 
-
 #ifdef __MINGW64__
 #include "Engine/Platform/Windows/WindowsWindow.h"
 #elif __linux__
@@ -36,19 +35,19 @@ public:
     void Init();
     void Run();
 private:
+
     sol::state lua;
     VertexArray mVAO;
     VertexBuffer mVBO;
     IndexBuffer mEBO;
     WindowProperties mWindowProps{};
 
-    std::vector<uint8_t> mSprIDsRemove;
-    std::vector<uint8_t> mSprIDsShow;
-    uint8_t mBgIDRemove{};
+    uint32_t NewBGId = 0;
 
     void NextStatement();
 
     Text mTextRender;
+    Text mTextNameRender;
     LuaConfig mConfigs;
 
     uint16_t mCurrentIterator{};

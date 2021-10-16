@@ -25,6 +25,7 @@ void LuaImage::hide()
 
 void LuaImage::Load()
 {
+    mImageLoaded = true;
     mImageShader.LoadFromSource(vertexShaderSrc, fragmentShaderSrc);
     mImageTexture.Load(mImagePath);
 
@@ -35,6 +36,7 @@ void LuaImage::Load()
 
 void LuaImage::UnLoad()
 {
+    mImageLoaded = false;
     mImageShader.UnLoad();
     mImageTexture.UnLoad();
 }

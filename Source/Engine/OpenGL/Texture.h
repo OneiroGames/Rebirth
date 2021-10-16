@@ -17,14 +17,14 @@ public:
     explicit Texture(const std::string& texturePath);
 
     void Bind() const;
-    void UnBind() const;
+    static void UnBind() ;
 
-    int width, height;
+    int width{}, height{};
 
     void Load(const std::string& path);
     void UnLoad();
 private:
-    uint32_t mTextureID;
+    uint32_t mTextureID{};
 };
 
 

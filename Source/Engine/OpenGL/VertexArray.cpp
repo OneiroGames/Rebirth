@@ -20,7 +20,7 @@ void VertexArray::Bind() const
     glBindVertexArray(mVertexArrayID);
 }
 
-void VertexArray::UnBind() const
+void VertexArray::UnBind()
 {
     glBindVertexArray(0);
 }

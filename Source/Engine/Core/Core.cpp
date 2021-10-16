@@ -41,5 +41,4 @@ const char* fragmentShaderSrc = R"(
     )";
 
 std::vector<VNStatementInfo> StatementsList;
-std::deque<std::pair<LuaImage*, Shader>> shaders;
-std::deque<std::pair<LuaImage*, Texture>> textures;
+std::deque<LuaImage*> images;

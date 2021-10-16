@@ -15,7 +15,7 @@ void IndexBuffer::Bind() const
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBufferID);
 }
 
-void IndexBuffer::UnBind() const
+void IndexBuffer::UnBind()
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }

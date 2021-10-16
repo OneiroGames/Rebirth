@@ -15,7 +15,7 @@ public:
     ~IndexBuffer();
 
     void Bind() const;
-    void UnBind() const;
+    static void UnBind();
 private:
     uint32_t mIndexBufferID{};
 };

@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <fstream>
 #include "Texture.h"
 #include "glad/glad.h"
 
@@ -47,15 +48,48 @@ void Texture::Bind() const
     glBindTexture(GL_TEXTURE_2D, mTextureID);
 }
 
-void Texture::UnBind() const
+void Texture::UnBind()
 {
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+#include <algorithm>
+#include <sstream>
+#include <iomanip>
+
+std::string ToHex(const std::string& s, bool upper_case /* = true */)
+{
+    std::ostringstream ret;
+
+    for (std::string::size_type i = 0; i < s.length(); ++i)
+        ret << std::hex << std::setfill('0') << std::setw(2) << (upper_case ? std::uppercase : std::nouppercase) << (int)s[i];
+
+    return ret.str();
 }
 
 void Texture::Load(const std::string& path)
 {
     int nrChannels;
     unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+
+    /*std::ifstream f(path);
+    std::ofstream file(path + "c");
+    file << f.rdbuf();
+    f.close();
+    f.open(path + "c");
+    file.close();
+    file.open(path + "cc");
+
+    std::string t;
+
+    while (getline(f, t))
+    {
+        std::reverse(t.begin(), t.end());
+        ToHex(t, false);
+        file << std::hex << t + "\n";
+    }
+    file.close();
+    f.close();*/
 
     if (data)
     {

@@ -17,7 +17,7 @@ public:
     void Init();
 
     void Bind() const;
-    void UnBind() const;
+    static void UnBind();
 private:
     uint32_t mVertexArrayID{};
 };

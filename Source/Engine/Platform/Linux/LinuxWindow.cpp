@@ -13,6 +13,7 @@ WindowProperties WindowHnd::CreateWindow(const uint32_t& width, const uint32_t& 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 2);
 
     WindowProperties windowProps {
             glfwCreateWindow((int)width, (int)height, title, nullptr, nullptr),
@@ -29,6 +30,8 @@ WindowProperties WindowHnd::CreateWindow(const uint32_t& width, const uint32_t& 
     {
         std::runtime_error("Failed to init glad!");
     }
+
+    glEnable(GL_SAMPLES);
 
     return windowProps;
 }

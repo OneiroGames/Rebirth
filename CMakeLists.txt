@@ -25,25 +25,21 @@ file(GLOB RebirthSRC
         "Source/Engine/Platform/*/*.cpp"
         "Source/Engine/OpenGL/*.h"
         "Source/Engine/OpenGL/*.cpp"
-        "Source/Engine/Application/Application.cpp"
-        "Source/Engine/Application/Application.h"
         "Source/Engine/Core/*.cpp"
         "Source/Engine/Core/*.h"
         "Source/Engine/Lua/*.cpp"
         "Source/Engine/Lua/*.h"
+        "ThirdParty/ImGui/*.cpp"
+        "ThirdParty/ImGui/backends/*.cpp"
+        "ThirdParty/ImGui/*.h"
+        "ThirdParty/ImGui/backends/*.h"
+        "ThirdParty/ImGui/misc/freetype/imgui_freetype.cpp"
         )
 
 add_executable(${CMAKE_PROJECT_NAME}
         Source/main.cpp
 
         ${RebirthSRC}
-
-        ThirdParty/ImGui/imgui_widgets.cpp
-        ThirdParty/ImGui/imgui.cpp
-        ThirdParty/ImGui/imgui_draw.cpp
-        ThirdParty/ImGui/imgui_tables.cpp
-        ThirdParty/ImGui/backends/imgui_impl_glfw.cpp
-        ThirdParty/ImGui/backends/imgui_impl_opengl3.cpp
         )
 
 add_subdirectory(ThirdParty/GLFW)
@@ -53,7 +49,9 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         glfw
         glad
         glm
+        ${CMAKE_DL_LIBS}
         ${LUA_LIBRARIES}
         ${FREETYPE_LIBRARIES}
         OpenGL::GL
+        OpenGL::GLU
         )
