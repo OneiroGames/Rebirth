@@ -8,12 +8,14 @@
 extern std::vector<VNStatementInfo> StatementsList;
 extern std::deque<LuaImage*> images;
 
-#include <GL/glu.h>
+/*#include "ImGui/imgui.h"
+#include "ImGui/backends/imgui_impl_glfw.h"
+#include "ImGui/backends/imgui_impl_opengl3.h"
+#include <GL/glu.h>*/
 
+double deltaTime = 0.0f;
 static bool NextState = true;
-
 bool VisualNovel = false;
-
 bool LeftButtonPress = false;
 
 Application::Application() = default;
@@ -22,13 +24,8 @@ Application::~Application() = default;
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
-#include "ImGui/imgui.h"
-#include "ImGui/backends/imgui_impl_glfw.h"
-#include "ImGui/backends/imgui_impl_opengl3.h"
-
 void Application::Run()
 {
-    double deltaTime = 0.0f;
     double lastFrame = 0.0f;
 
     double last = 0.0f, first = 0.0f;
@@ -132,42 +129,12 @@ void Application::Run()
 
         NextStatement();
 
-        int i = 0;
+        uint32_t i = 0;
         for (auto& img : images)
         {
-            if (img->isLoaded())
+            if (!UpdateImage(img, i, MVP))
             {
-                img->GetShader()->use();
-                img->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
-                img->GetTexture()->Bind();
-                glDrawArrays(GL_TRIANGLES, 0, 6);
-            }
-
-            img->GetTransition()->UpdateReSprite(deltaTime);
-            img->GetTransition()->UpdateReScene(deltaTime);
-
-            if (img->GetTransition()->ReSceneEnd() && NewBGId > 0)
-            {
-                images.push_front(StatementsList[NewBGId].image);
-                images.begin().operator*()->GetTransition()->SetType(TransitionTypes::DISSOLVE);
-                NewBGId = 0;
-            }
-
-            if (images[0]->GetTransition()->isShowed())
-            {
-                if (!images[i]->GetTransition()->isShowed())
-                {
-                    images[i]->GetTransition()->UpdateSprite(deltaTime);
-                    continue;
-                }
-                else
-                {
-                    images[i]->GetTransition()->UpdateSprite(deltaTime);
-                }
-            }
-            else
-            {
-                img->GetTransition()->UpdateScene(deltaTime);
+                continue;
             }
             i++;
         }
@@ -300,6 +267,46 @@ void Application::NextStatement()
         end:
         NextState = false;
     }
+}
+
+bool Application::UpdateImage(LuaImage* img, uint32_t& it, glm::mat4& MVP)
+{
+    if (img->isLoaded())
+    {
+        img->GetShader()->use();
+        img->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
+        img->GetTexture()->Bind();
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+    }
+
+    img->GetTransition()->UpdateReSprite(deltaTime);
+    img->GetTransition()->UpdateReScene(deltaTime);
+
+    if (img->GetTransition()->ReSceneEnd() && NewBGId > 0)
+    {
+        images.push_front(StatementsList[NewBGId].image);
+        images.begin().operator*()->GetTransition()->SetType(TransitionTypes::DISSOLVE);
+        NewBGId = 0;
+    }
+
+    if (images[0]->GetTransition()->isShowed())
+    {
+        if (!images[it]->GetTransition()->isShowed())
+        {
+            images[it]->GetTransition()->UpdateSprite(deltaTime);
+            return false;
+        }
+        else
+        {
+            images[it]->GetTransition()->UpdateSprite(deltaTime);
+        }
+    }
+    else
+    {
+        img->GetTransition()->UpdateScene(deltaTime);
+    }
+
+    return true;
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)

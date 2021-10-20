@@ -8,6 +8,8 @@
 #ifdef __MINGW64__
 #include "Engine/Platform/Windows/WindowsWindow.h"
 #elif __linux__
+
+#include <Engine/Lua/LuaImage.h>
 #include "Engine/Platform/Linux/LinuxWindow.h"
 #endif
 
@@ -35,6 +37,7 @@ public:
     void Init();
     void Run();
 private:
+    bool UpdateImage(LuaImage* img, uint32_t& it, glm::mat4& MVP);
 
     sol::state lua;
     VertexArray mVAO;
@@ -42,7 +45,7 @@ private:
     IndexBuffer mEBO;
     WindowProperties mWindowProps{};
 
-    uint32_t NewBGId = 0;
+    uint32_t NewBGId{};
 
     void NextStatement();
 
