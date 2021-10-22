@@ -28,6 +28,8 @@
 
 #include "Engine/OpenGL/Text.h"
 
+#include "Engine/OpenGL/TextBox.h"
+
 class Application
 {
 public:
@@ -52,6 +54,8 @@ private:
     Text mTextRender;
     Text mTextNameRender;
     LuaConfig mConfigs;
+
+    TextBox mTextBox;
 
     uint16_t mCurrentIterator{};
 };

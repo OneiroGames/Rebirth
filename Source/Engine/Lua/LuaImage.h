@@ -18,6 +18,7 @@
 class LuaImage
 {
 public:
+    LuaImage() {}
     explicit LuaImage(std::string path) : mImagePath(std::move(path)) { mImageTransition.SetImage(this); }
 
     void show();

@@ -92,12 +92,12 @@ void Application::Run()
 
         mVAO.Bind();
 
-        if (!images.empty() && NextState && !images[images.size() - 1]->GetTransition()->isShowed() && !images[0]->GetTransition()->ReSceneEnd())
+        if (!images.empty() && NextState && !images[images.size() - 1]->GetTransition()->isShowed() && !images[0]->GetTransition()->ReSceneEnd() && mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f)
         {
             NextState = false;
         }
 
-        if (!images.empty() && images[images.size() - 1]->GetTransition()->isShowed() && images[0]->GetTransition()->isShowed())
+        if (!images.empty() && images[images.size() - 1]->GetTransition()->isShowed() && images[0]->GetTransition()->isShowed() && mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f)
         {
             if (timerToNextChar < 0.0f)
             {
@@ -141,8 +141,18 @@ void Application::Run()
 
         if (!images.empty() && images[images.size() - 1]->GetTransition()->isShowed() && images[0]->GetTransition()->isShowed())
         {
-            mTextNameRender.Render(MVP, 185.0f, 270.0f, glm::vec3(1.0f, 0.1f, 0.0f));
-            mTextRender.Render(MVP, 190.0f, 230.0f, glm::vec3(0.7f, 1.0f, 0.0f));
+            mTextBox.GetImage()->GetShader()->use();
+            mTextBox.GetImage()->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
+            mTextBox.GetImage()->GetTexture()->Bind();
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+
+            mTextBox.Update(deltaTime);
+
+            if (mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f)
+            {
+                mTextNameRender.Render(MVP, 185.0f, 270.0f, glm::vec3(1.0f, 0.1f, 0.0f));
+                mTextRender.Render(MVP, 190.0f, 230.0f, glm::vec3(0.7f, 1.0f, 0.0f));
+            }
         }
 
         /*ImGui_ImplOpenGL3_NewFrame();
@@ -180,6 +190,8 @@ void Application::Init()
     LuaCore::Run(lua);
     lua.require_file("resources", "resources.lua");
     lua.do_file("script.lua");
+
+    mTextBox.Init("textbox.png");
 
     constexpr const float vertices[] = {
             1920.0f,  1080.0f, 0.0f,
@@ -240,12 +252,22 @@ void Application::NextStatement()
             }
             mCurrentIterator++;
             NextState = false;
+            if (mTextBox.alpha >= 1.0f && mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f)
+            {
+                mTextBox.GetImage()->SetAlpha(0.0f);
+                mTextBox.alpha = 0.0f;
+            }
             goto start;
         case VNStatements::SHOWSPRITE:
             images.push_back(StatementsList[mCurrentIterator].image);
             StatementsList[mCurrentIterator].image->GetTransition()->SetType(TransitionTypes::DISSOLVE);
             mCurrentIterator++;
             NextState = false;
+            if (mTextBox.alpha >= 1.0f && mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f)
+            {
+                mTextBox.GetImage()->SetAlpha(0.0f);
+                mTextBox.alpha = 0.0f;
+            }
             goto start;
         case VNStatements::HIDESPRITE:
         {
@@ -258,6 +280,11 @@ void Application::NextStatement()
             }
             mCurrentIterator++;
             NextState = false;
+            if (mTextBox.alpha >= 1.0f && mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f)
+            {
+                mTextBox.GetImage()->SetAlpha(0.0f);
+                mTextBox.alpha = 0.0f;
+            }
             goto start;
         }
         default:
