@@ -48,7 +48,7 @@ public:
                 vec4 Texture = texture2D(uTexture, vec2(TexCoords.x / uTextureWidth, TexCoords.y / uTextureHeight));
                 if(Texture.a < 0.1)
                         discard;
-                if (uTextureAlpha < Texture.a)
+                if (uTextureAlpha <= Texture.a)
                     Texture.a = uTextureAlpha;
                 FragColor = vec4(Texture.rgba);
             }
@@ -68,13 +68,29 @@ public:
 
     void Update(const float& dt)
     {
-        if (mTextBoxImage.GetCurrentAlpha() < 1.0f)
+        if (mTextBoxImage.GetCurrentAlpha() < 1.0f && !reDissolve)
         {
             alpha += dt * 1.5f;
             mTextBoxImage.SetAlpha(alpha);
         }
     }
+
+    void ReUpdate(const float& dt)
+    {
+        reAlpha -= dt * 0.85f;
+        mTextBoxImage.SetAlpha(reAlpha);
+
+        if (mTextBoxImage.GetCurrentAlpha() <= 0.0f)
+        {
+            reDissolve = false;
+            reAlpha = 1.0f;
+            return;
+        }
+    }
     float alpha = 0.0f;
+    float reAlpha = 1.0f;
+    bool reDissolve = false;
+    bool isRendered = false;
 private:
     LuaImage mTextBoxImage;
 };

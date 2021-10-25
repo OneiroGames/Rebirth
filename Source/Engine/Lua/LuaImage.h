@@ -37,14 +37,14 @@ public:
     Transition* GetTransition() { return &mImageTransition; }
 
     bool isLoaded() { return mImageLoaded; }
+    std::string mImagePath;
 private:
+
     bool mIsSprite = false;
 
     Transition mImageTransition;
 
     float mCurrentAlpha = 0.0f;
-
-    std::string mImagePath;
     Shader mImageShader;
     Texture mImageTexture;
 

@@ -15,8 +15,8 @@ extern std::deque<LuaImage*> images;
 
 double deltaTime = 0.0f;
 static bool NextState = true;
-bool VisualNovel = false;
 bool LeftButtonPress = false;
+bool isStartGame = true;
 
 Application::Application() = default;
 
@@ -127,7 +127,13 @@ void Application::Run()
             }
         }
 
+
         NextStatement();
+
+        if (mTextBox.reDissolve)
+        {
+            mTextBox.ReUpdate(deltaTime);
+        }
 
         uint32_t i = 0;
         for (auto& img : images)
@@ -139,14 +145,22 @@ void Application::Run()
             i++;
         }
 
-        if (!images.empty() && images[images.size() - 1]->GetTransition()->isShowed() && images[0]->GetTransition()->isShowed())
+
+        mTextBox.isRendered = false;
+
+        if (!mTextBox.isRendered && !images.empty() && images[images.size() - 1]->GetTransition()->isShowed() && images[0]->GetTransition()->isShowed())
         {
             mTextBox.GetImage()->GetShader()->use();
             mTextBox.GetImage()->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
             mTextBox.GetImage()->GetTexture()->Bind();
+
             glDrawArrays(GL_TRIANGLES, 0, 6);
 
-            mTextBox.Update(deltaTime);
+            if (!mTextBox.reDissolve)
+            {
+                mTextBox.Update(deltaTime);
+            }
+            mTextBox.isRendered = true;
 
             if (mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f)
             {
@@ -154,6 +168,7 @@ void Application::Run()
                 mTextRender.Render(MVP, 190.0f, 230.0f, glm::vec3(0.7f, 1.0f, 0.0f));
             }
         }
+
 
         /*ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -167,6 +182,8 @@ void Application::Run()
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());*/
+
+        isStartGame = false;
 
         glfwSwapBuffers(mWindowProps.window);
     }
@@ -245,6 +262,13 @@ void Application::NextStatement()
             {
                 images[0]->GetTransition()->SetType(TransitionTypes::REDISSOLVE);
                 NewBGId = mCurrentIterator;
+                if (mTextBox.alpha >= 1.0f && mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f)
+                {
+                    mTextBox.reDissolve = true;
+                    mTextBox.alpha = 0.0f;
+                    mTextBox.GetImage()->SetAlpha(mTextBox.alpha);
+                    mTextBox.isRendered = true;
+                }
             }
             else
             {
@@ -252,21 +276,18 @@ void Application::NextStatement()
             }
             mCurrentIterator++;
             NextState = false;
-            if (mTextBox.alpha >= 1.0f && mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f)
-            {
-                mTextBox.GetImage()->SetAlpha(0.0f);
-                mTextBox.alpha = 0.0f;
-            }
             goto start;
         case VNStatements::SHOWSPRITE:
             images.push_back(StatementsList[mCurrentIterator].image);
             StatementsList[mCurrentIterator].image->GetTransition()->SetType(TransitionTypes::DISSOLVE);
             mCurrentIterator++;
             NextState = false;
-            if (mTextBox.alpha >= 1.0f && mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f)
+            if (mTextBox.alpha >= 1.0f && mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f && !isStartGame)
             {
-                mTextBox.GetImage()->SetAlpha(0.0f);
+                mTextBox.reDissolve = true;
                 mTextBox.alpha = 0.0f;
+                mTextBox.GetImage()->SetAlpha(mTextBox.alpha);
+                mTextBox.isRendered = true;
             }
             goto start;
         case VNStatements::HIDESPRITE:
@@ -282,8 +303,10 @@ void Application::NextStatement()
             NextState = false;
             if (mTextBox.alpha >= 1.0f && mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f)
             {
-                mTextBox.GetImage()->SetAlpha(0.0f);
+                mTextBox.reDissolve = true;
                 mTextBox.alpha = 0.0f;
+                mTextBox.GetImage()->SetAlpha(mTextBox.alpha);
+                mTextBox.isRendered = true;
             }
             goto start;
         }
@@ -306,31 +329,53 @@ bool Application::UpdateImage(LuaImage* img, uint32_t& it, glm::mat4& MVP)
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
 
-    img->GetTransition()->UpdateReSprite(deltaTime);
-    img->GetTransition()->UpdateReScene(deltaTime);
-
-    if (img->GetTransition()->ReSceneEnd() && NewBGId > 0)
+    if (mTextBox.reDissolve)
     {
-        images.push_front(StatementsList[NewBGId].image);
-        images.begin().operator*()->GetTransition()->SetType(TransitionTypes::DISSOLVE);
-        NewBGId = 0;
-    }
-
-    if (images[0]->GetTransition()->isShowed())
-    {
-        if (!images[it]->GetTransition()->isShowed())
+        if (!mTextBox.isRendered)
         {
-            images[it]->GetTransition()->UpdateSprite(deltaTime);
-            return false;
+            mTextBox.GetImage()->GetShader()->use();
+            mTextBox.GetImage()->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
+            mTextBox.GetImage()->GetTexture()->Bind();
+
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+
+            mTextBox.isRendered = true;
+
+            return true;
         }
         else
         {
-            images[it]->GetTransition()->UpdateSprite(deltaTime);
+            return true;
         }
     }
     else
     {
-        img->GetTransition()->UpdateScene(deltaTime);
+        img->GetTransition()->UpdateReSprite(deltaTime);
+        img->GetTransition()->UpdateReScene(deltaTime);
+
+        if (img->GetTransition()->ReSceneEnd() && NewBGId > 0)
+        {
+            images.push_front(StatementsList[NewBGId].image);
+            images.begin().operator*()->GetTransition()->SetType(TransitionTypes::DISSOLVE);
+            NewBGId = 0;
+        }
+
+        if (images[0]->GetTransition()->isShowed())
+        {
+            if (!images[it]->GetTransition()->isShowed())
+            {
+                images[it]->GetTransition()->UpdateSprite(deltaTime);
+                return false;
+            }
+            else
+            {
+                images[it]->GetTransition()->UpdateSprite(deltaTime);
+            }
+        }
+        else
+        {
+            img->GetTransition()->UpdateScene(deltaTime);
+        }
     }
 
     return true;
@@ -344,14 +389,6 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
         {
         case GLFW_MOUSE_BUTTON_LEFT:
             NextState = true;
-            if (LeftButtonPress)
-            {
-                LeftButtonPress = false;
-            }
-            else
-            {
-                LeftButtonPress = true;
-            }
             break;
         default:
             break;
