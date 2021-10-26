@@ -92,12 +92,20 @@ void Application::Run()
 
         mVAO.Bind();
 
-        if (!images.empty() && NextState && !images[images.size() - 1]->GetTransition()->isShowed() && !images[0]->GetTransition()->ReSceneEnd() && mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f)
+        if (!images.empty() && NextState && !images[images.size() - 1]->GetTransition()->isShowed() && !images[0]->GetTransition()->ReSceneEnd())
         {
             NextState = false;
         }
 
-        if (!images.empty() && images[images.size() - 1]->GetTransition()->isShowed() && images[0]->GetTransition()->isShowed() && mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f)
+        if (NextState && mTextBox.ReDissolveEnabled() || mTextBox.DissolveEnabled())
+        {
+            if (!images.empty() && images[images.size() - 1]->GetTransition()->isShowed())
+            {
+                NextState = false;
+            }
+        }
+
+        if (!images.empty() && images[images.size() - 1]->GetTransition()->isShowed() && images[0]->GetTransition()->isShowed() && !mTextBox.ReDissolveEnabled() && !mTextBox.DissolveEnabled())
         {
             if (timerToNextChar < 0.0f)
             {
@@ -130,11 +138,6 @@ void Application::Run()
 
         NextStatement();
 
-        if (mTextBox.reDissolve)
-        {
-            mTextBox.ReUpdate(deltaTime);
-        }
-
         uint32_t i = 0;
         for (auto& img : images)
         {
@@ -145,10 +148,7 @@ void Application::Run()
             i++;
         }
 
-
-        mTextBox.isRendered = false;
-
-        if (!mTextBox.isRendered && !images.empty() && images[images.size() - 1]->GetTransition()->isShowed() && images[0]->GetTransition()->isShowed())
+        if (mTextBox.ReDissolveEnabled())
         {
             mTextBox.GetImage()->GetShader()->use();
             mTextBox.GetImage()->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
@@ -156,13 +156,23 @@ void Application::Run()
 
             glDrawArrays(GL_TRIANGLES, 0, 6);
 
-            if (!mTextBox.reDissolve)
+            mTextBox.Update(deltaTime);
+        }
+
+        if (!images.empty() && images[images.size() - 1]->GetTransition()->isShowed() && images[0]->GetTransition()->isShowed())
+        {
+            if (!mTextBox.ReDissolveEnabled())
             {
+                mTextBox.GetImage()->GetShader()->use();
+                mTextBox.GetImage()->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
+                mTextBox.GetImage()->GetTexture()->Bind();
+
+                glDrawArrays(GL_TRIANGLES, 0, 6);
+
                 mTextBox.Update(deltaTime);
             }
-            mTextBox.isRendered = true;
 
-            if (mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f)
+            if (!mTextBox.ReDissolveEnabled() && !mTextBox.DissolveEnabled())
             {
                 mTextNameRender.Render(MVP, 185.0f, 270.0f, glm::vec3(1.0f, 0.1f, 0.0f));
                 mTextRender.Render(MVP, 190.0f, 230.0f, glm::vec3(0.7f, 1.0f, 0.0f));
@@ -206,6 +216,7 @@ void Application::Init()
     lua.open_libraries(sol::lib::base, sol::lib::package);
     LuaCore::Run(lua);
     lua.require_file("resources", "resources.lua");
+
     lua.do_file("script.lua");
 
     mTextBox.Init("textbox.png");
@@ -258,36 +269,37 @@ void Application::NextStatement()
             break;
         }
         case VNStatements::SCENE:
+        {
             if (!images.empty())
             {
                 images[0]->GetTransition()->SetType(TransitionTypes::REDISSOLVE);
                 NewBGId = mCurrentIterator;
-                if (mTextBox.alpha >= 1.0f && mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f)
-                {
-                    mTextBox.reDissolve = true;
-                    mTextBox.alpha = 0.0f;
-                    mTextBox.GetImage()->SetAlpha(mTextBox.alpha);
-                    mTextBox.isRendered = true;
-                }
             }
             else
             {
                 images.push_front(StatementsList[mCurrentIterator].image);
             }
+
+            if (!isStartGame)
+            {
+                if (mTextBox.isShowed())
+                {
+                    mTextBox.SetReDissolveEnabled();
+                }
+            }
+
             mCurrentIterator++;
             NextState = false;
             goto start;
+        }
         case VNStatements::SHOWSPRITE:
             images.push_back(StatementsList[mCurrentIterator].image);
             StatementsList[mCurrentIterator].image->GetTransition()->SetType(TransitionTypes::DISSOLVE);
             mCurrentIterator++;
             NextState = false;
-            if (mTextBox.alpha >= 1.0f && mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f && !isStartGame)
+            if (mTextBox.isShowed() >= 1.0f && !isStartGame)
             {
-                mTextBox.reDissolve = true;
-                mTextBox.alpha = 0.0f;
-                mTextBox.GetImage()->SetAlpha(mTextBox.alpha);
-                mTextBox.isRendered = true;
+                mTextBox.SetReDissolveEnabled();
             }
             goto start;
         case VNStatements::HIDESPRITE:
@@ -301,12 +313,9 @@ void Application::NextStatement()
             }
             mCurrentIterator++;
             NextState = false;
-            if (mTextBox.alpha >= 1.0f && mTextBox.GetImage()->GetCurrentAlpha() >= 1.0f)
+            if (mTextBox.isShowed())
             {
-                mTextBox.reDissolve = true;
-                mTextBox.alpha = 0.0f;
-                mTextBox.GetImage()->SetAlpha(mTextBox.alpha);
-                mTextBox.isRendered = true;
+                mTextBox.SetReDissolveEnabled();
             }
             goto start;
         }
@@ -329,24 +338,9 @@ bool Application::UpdateImage(LuaImage* img, uint32_t& it, glm::mat4& MVP)
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
 
-    if (mTextBox.reDissolve)
+    if (mTextBox.ReDissolveEnabled())
     {
-        if (!mTextBox.isRendered)
-        {
-            mTextBox.GetImage()->GetShader()->use();
-            mTextBox.GetImage()->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
-            mTextBox.GetImage()->GetTexture()->Bind();
-
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-
-            mTextBox.isRendered = true;
-
-            return true;
-        }
-        else
-        {
-            return true;
-        }
+        return true;
     }
     else
     {

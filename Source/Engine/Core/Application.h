@@ -28,7 +28,7 @@
 
 #include "Engine/OpenGL/Text.h"
 
-#include "Engine/OpenGL/TextBox.h"
+#include "Engine/Lua/LuaTextBox.h"
 
 class Application
 {
@@ -55,7 +55,7 @@ private:
     Text mTextNameRender;
     LuaConfig mConfigs;
 
-    TextBox mTextBox;
+    LuaTextBox mTextBox;
 
     uint16_t mCurrentIterator{};
 };
