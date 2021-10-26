@@ -12,4 +12,6 @@ function label_start()
     scene(classroom)
     s "adsadsadadsd"
     ayakosmile:hide()
+    ayakounhappy:show()
+    s "sadfafssafmpasdvjnpdsvnp"
 end
