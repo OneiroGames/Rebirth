@@ -1,8 +1,0 @@
-documentation
-examples
-.github
-scripts
-tests
-subprojects
-single
-.git
