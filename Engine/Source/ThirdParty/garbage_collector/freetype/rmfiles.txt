@@ -1,0 +1,11 @@
+ChangeLog.*
+ChangeLog
+Jamfile
+README.git
+autogen.sh
+configure
+modules.cfg
+version.sed
+vms_make.com
+Jamrules
+README

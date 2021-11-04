@@ -1,0 +1,5 @@
+.travis.yml
+.gitignore
+.appveyor.yml
+copying.txt
+*.md

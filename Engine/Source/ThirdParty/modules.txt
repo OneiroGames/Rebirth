@@ -1,0 +1,7 @@
+https://github.com/glfw/glfw
+https://github.com/ocornut/imgui
+https://github.com/g-truc/glm
+https://github.com/Dav1dde/glad
+https://github.com/ThePhD/sol2
+https://github.com/winlibs/freetype
+https://github.com/nothings/stb
