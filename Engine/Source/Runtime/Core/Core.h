@@ -9,7 +9,7 @@
 #include <vector>
 #include <deque>
 
-#include "Engine/Lua/LuaImage.h"
+#include "Editor/Lua/LuaImage.h"
 
 enum class VNStatements
 {

@@ -6,9 +6,9 @@
 #define REBIRTH_LUAIMAGE_H
 
 
-#include "Engine/OpenGL/Shader.h"
-#include "Engine/OpenGL/Texture.h"
-#include "Engine/OpenGL/Transition.h"
+#include "Runtime/OpenGL/Shader.h"
+#include "Runtime/OpenGL/Texture.h"
+#include "Runtime/OpenGL/Transition.h"
 
 #include <utility>
 

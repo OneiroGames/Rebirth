@@ -2,7 +2,7 @@
 // Created by dezlow on 17.09.2021.
 //
 
-#include "Engine/Core/Application.h"
+#include "Runtime/Core/Application.h"
 
 int main()
 {

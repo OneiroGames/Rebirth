@@ -7,7 +7,7 @@
 extern const char* vertexShaderSrc;
 extern const char* fragmentShaderSrc;
 
-#include "Engine/Core/Core.h"
+#include "Runtime/Core/Core.h"
 extern std::vector<VNStatementInfo> StatementsList;
 
 void LuaImage::show()

@@ -58,7 +58,7 @@ void LuaTextBox::Update(const float& dt)
 {
     if (mReDissolve && !mDissolve)
     {
-        mCurrentReAlpha -= 1.0f * dt;
+        mCurrentReAlpha -= 1.5f * dt;
         mTextBoxImage.SetAlpha(mCurrentReAlpha);
 
         mReDissolve = true;

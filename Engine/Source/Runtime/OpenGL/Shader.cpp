@@ -83,6 +83,16 @@ void Shader::UnLoad() const
     glDeleteProgram(mShaderID);
 }
 
+GLint Shader::GetUniformLocation(const std::string& name) const
+{
+    if (mUniformLocationCache.find(name) != mUniformLocationCache.end())
+        return mUniformLocationCache[name];
+
+    GLint location = glGetUniformLocation(mShaderID, name.c_str());
+    mUniformLocationCache[name] = location;
+    return location;
+}
+
 unsigned int CreateVertexShader(const char* shaderSrc)
 {
     uint32_t shaderID = glCreateShader(GL_VERTEX_SHADER);
@@ -145,25 +155,25 @@ void CheckCompileErrors(const uint32_t& shader, const char* type)
 }
 
 template<>
-void Shader::SetUniform<float>(const std::string& uniformName, const float& value) const
+void Shader::SetUniform<float>(const std::string& uniformName, const float& value)
 {
     glUniform1f(glGetUniformLocation(mShaderID, uniformName.c_str()), value);
 }
 
 template<>
-void Shader::SetUniform<int>(const std::string& uniformName, const int& value) const
+void Shader::SetUniform<int>(const std::string& uniformName, const int& value)
 {
-    glUniform1i(glGetUniformLocation(mShaderID, uniformName.c_str()), value);
+    glUniform1i(GetUniformLocation(uniformName), value);
 }
 
 template<>
-void Shader::SetUniform<glm::vec3>(const std::string& uniformName, const glm::vec3& value) const
+void Shader::SetUniform<glm::vec3>(const std::string& uniformName, const glm::vec3& value)
 {
-    glUniform3fv(glGetUniformLocation(mShaderID, uniformName.c_str()), 1, &value[0]);
+    glUniform3fv(GetUniformLocation(uniformName), 1, &value[0]);
 }
 
 template<>
-void Shader::SetUniform<glm::mat4>(const std::string& uniformName, const glm::mat4& value) const
+void Shader::SetUniform<glm::mat4>(const std::string& uniformName, const glm::mat4& value)
 {
-    glUniformMatrix4fv(glGetUniformLocation(mShaderID, uniformName.c_str()), 1, GL_FALSE, &value[0][0]);
+    glUniformMatrix4fv(GetUniformLocation(uniformName), 1, GL_FALSE, &value[0][0]);
 }

@@ -8,6 +8,7 @@
 #include "glad/glad.h"
 
 #include <string>
+#include <unordered_map>
 
 class Shader
 {
@@ -22,9 +23,12 @@ public:
     void UnLoad() const;
 
     template<class T>
-    void SetUniform(const std::string& uniformName, const T& value) const {}
+    void SetUniform(const std::string& uniformName, const T& value) {}
 private:
+    mutable std::unordered_map<std::string, GLint> mUniformLocationCache;
     uint32_t mShaderID{};
+
+    GLint GetUniformLocation(const std::string& name) const;
 };
 
 

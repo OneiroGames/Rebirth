@@ -6,7 +6,7 @@
 #define REBIRTH_LUATEXTBOX_H
 
 
-#include "Engine/Lua/LuaImage.h"
+#include "Editor/Lua/LuaImage.h"
 #include "glm/glm.hpp"
 
 class LuaTextBox

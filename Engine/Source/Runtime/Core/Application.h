@@ -8,27 +8,26 @@
 #ifdef __MINGW64__
 #include "Engine/Platform/Windows/WindowsWindow.h"
 #elif __linux__
-
-#include <Engine/Lua/LuaImage.h>
-#include "Engine/Platform/Linux/LinuxWindow.h"
+#include "Runtime/Platform/Linux/LinuxWindow.h"
 #endif
 
-#include "Engine/OpenGL/Shader.h"
-#include "Engine/OpenGL/VertexArray.h"
-#include "Engine/OpenGL/VertexBuffer.h"
-#include "Engine/OpenGL/VertexBufferLayout.h"
-#include "Engine/OpenGL/IndexBuffer.h"
-#include "Engine/OpenGL/Texture.h"
-#include "Engine/Lua/LuaConfig.h"
+
+#include "Runtime/OpenGL/Shader.h"
+#include "Runtime/OpenGL/VertexArray.h"
+#include "Runtime/OpenGL/VertexBuffer.h"
+#include "Runtime/OpenGL/VertexBufferLayout.h"
+#include "Runtime/OpenGL/IndexBuffer.h"
+#include "Runtime/OpenGL/Texture.h"
+#include "Runtime/OpenGL/Text.h"
+
+#include "Editor/Lua/LuaTextBox.h"
+#include "Editor/Lua/LuaConfig.h"
+#include "Editor/Lua/LuaImage.h"
 
 #include "glm/glm/glm.hpp"
 #include "glm/glm/gtc/matrix_transform.hpp"
 
 #include "stb/stb_image.h"
-
-#include "Engine/OpenGL/Text.h"
-
-#include "Engine/Lua/LuaTextBox.h"
 
 class Application
 {

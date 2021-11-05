@@ -4,10 +4,10 @@
 
 #include <vector>
 #include "LuaCore.h"
-#include "Engine/Core/Core.h"
+#include "Runtime/Core/Core.h"
 extern std::vector<VNStatementInfo> StatementsList;
 
-#include "Engine/Lua/LuaImage.h"
+#include "Editor/Lua/LuaImage.h"
 
 void text(const std::string& text)
 {

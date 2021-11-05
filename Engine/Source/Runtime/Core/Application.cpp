@@ -3,8 +3,8 @@
 //
 
 #include "Application.h"
-#include "Engine/Lua/LuaCore.h"
-#include "Engine/Core/Core.h"
+#include "Editor/Lua/LuaCore.h"
+#include "Runtime/Core/Core.h"
 extern std::vector<VNStatementInfo> StatementsList;
 extern std::deque<LuaImage*> images;
 
@@ -14,7 +14,7 @@ extern std::deque<LuaImage*> images;
 #include <GL/glu.h>*/
 
 double deltaTime = 0.0f;
-static bool NextState = true;
+bool NextState = true;
 bool LeftButtonPress = false;
 bool isStartGame = true;
 
@@ -33,7 +33,7 @@ void Application::Run()
 
     mTextRender.Init("font.ttf", 34);
     mTextNameRender.Init("font.ttf", 36);
-    float timerToNextChar = 0.03f;
+    float timerToNextChar = 0.02f;
 
     /*bool st = true;
 
@@ -65,7 +65,7 @@ void Application::Run()
 
         double tx, ty, tz;
         gluUnProject(CursorPosX, CursorPosY,0.0, modelView,projection, viewport, &tx, &ty, &tz);
-
+git clone --recurse-submodules $(sed -n "$i, 1p" modules.txt)
         if (tx >= 0.45 && tx <= 1.0 && ty >= 0.2 && ty <= 1.0)
         {
             ts = true;
@@ -135,7 +135,6 @@ void Application::Run()
             }
         }
 
-
         NextStatement();
 
         uint32_t i = 0;
@@ -178,7 +177,6 @@ void Application::Run()
                 mTextRender.Render(MVP, 190.0f, 230.0f, glm::vec3(0.7f, 1.0f, 0.0f));
             }
         }
-
 
         /*ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();

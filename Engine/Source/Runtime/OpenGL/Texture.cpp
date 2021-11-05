@@ -21,8 +21,8 @@ Texture::Texture(const std::string& texturePath)
         Bind();
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         switch (nrChannels)
         {
         case 4:
@@ -53,11 +53,11 @@ void Texture::UnBind()
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-#include <algorithm>
+/*#include <algorithm>
 #include <sstream>
 #include <iomanip>
 
-std::string ToHex(const std::string& s, bool upper_case /* = true */)
+std::string ToHex(const std::string& s, bool upper_case /* = true )
 {
     std::ostringstream ret;
 
@@ -65,7 +65,7 @@ std::string ToHex(const std::string& s, bool upper_case /* = true */)
         ret << std::hex << std::setfill('0') << std::setw(2) << (upper_case ? std::uppercase : std::nouppercase) << (int)s[i];
 
     return ret.str();
-}
+}*/
 
 void Texture::Load(const std::string& path)
 {

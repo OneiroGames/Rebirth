@@ -3,8 +3,8 @@
 //
 
 #include "Transition.h"
-#include "Engine/Lua/LuaImage.h"
-#include "Engine/Core/Core.h"
+#include "Editor/Lua/LuaImage.h"
+#include "Runtime/Core/Core.h"
 extern std::deque<LuaImage*> images;
 
 void Transition::UpdateScene(const float& dt)
