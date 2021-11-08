@@ -19,13 +19,13 @@ remove_garbage_in_modules()
       continue
     fi
 
-    cd garbage_collector/ && cd $dir/
+    cd garbage_collector/ && cd $dir
     LINES=$(cat rmdirs.txt | wc -l)
     for (( i=1; i <= $LINES + 1; i++ ))
     do
     {
       DIRTORM=$(sed -n "$i, 1p" rmdirs.txt)
-      cd .. && cd .. && cd $dir/ || exit
+      cd .. && cd .. && cd $dir || exit
       rm -rf $DIRTORM
       cd .. && cd garbage_collector/ && cd $dir/ || exit
     }
@@ -41,10 +41,11 @@ remove_garbage_in_modules()
       cd .. && cd garbage_collector/ && cd $dir/ || exit
     }
     done
+
+    cd .. && cd .. || exit
   }
   done
-  cd .. && cd .. || exit
-  rm -rf garbage_collector
+  rm -rf garbage_collector/
 }
 
 function timer_start()
@@ -65,22 +66,14 @@ function timer_print_result()
 
 cd ..
 
+timer_start
+
 echo "Cloning modules..."
-
-timer_start
 update_modules
-timer_end
-
 echo "Cloning modules completed."
-
-timer_print_result
-
 echo "Removing garbage in modules..."
-
-timer_start
 remove_garbage_in_modules
-timer_end
-
 echo "Removing garbage in modules was completed."
 
+timer_end
 timer_print_result
