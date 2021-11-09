@@ -5,3 +5,4 @@ https://github.com/Dav1dde/glad
 https://github.com/ThePhD/sol2
 https://github.com/winlibs/freetype
 https://github.com/nothings/stb
+https://github.com/walterschell/Lua

@@ -7,17 +7,14 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-#set(CMAKE_EXE_LINKER_FLAGS "-v -lfreetype")
-
 include_directories(Engine/Source/ThirdParty/)
 include_directories(Engine/Source/)
 
-find_package(OpenGL REQUIRED)
-find_package(Lua51 REQUIRED)
-find_package(Freetype REQUIRED)
-find_package(SFML 2.5 COMPONENTS audio REQUIRED)
+include_directories(Engine/Source/ThirdParty/freetype/include/)
+include_directories(Engine/Source/ThirdParty/sol2/include/)
 
-include_directories(${FREETYPE_INCLUDE_DIRS})
+find_package(OpenGL REQUIRED)
+#find_package(SFML 2.5 COMPONENTS audio REQUIRED)
 
 file(GLOB RebirthSRC
         "Engine/Source/Runtime/*.h"
@@ -40,14 +37,15 @@ add_executable(${CMAKE_PROJECT_NAME}
 add_subdirectory(Engine/Source/ThirdParty/glfw)
 add_subdirectory(Engine/Source/ThirdParty/glad)
 add_subdirectory(Engine/Source/ThirdParty/glm)
+add_subdirectory(Engine/Source/ThirdParty/freetype)
+add_subdirectory(Engine/Source/ThirdParty/Lua)
 target_link_libraries(${CMAKE_PROJECT_NAME}
         glfw
         glad
         glm
-        ${CMAKE_DL_LIBS}
-        ${LUA_LIBRARIES}
-        ${FREETYPE_LIBRARY}
+        freetype
         OpenGL::GL
+        lua_static
         #OpenGL::GLU
         #sfml-audio
         )

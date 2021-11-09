@@ -2,11 +2,11 @@ function update_modules()
 {
   cd Engine/Source/ThirdParty/
   LINES=$(cat modules.txt | wc -l)
-  for (( i=1; i <= LINES + 1; i++ ))
+  echo $LINES
+  for (( i=1; i <= LINES + 2; i++ ))
   do
     git clone --recurse-submodules $(sed -n "$i, 1p" modules.txt)
   done
-  rm -f modules.txt
 }
 
 remove_garbage_in_modules()
@@ -45,7 +45,13 @@ remove_garbage_in_modules()
     cd .. && cd .. || exit
   }
   done
-  rm -rf garbage_collector/
+}
+
+function build_freetype()
+{
+  cd freetype/ || exit
+  sh autogen.sh
+  make
 }
 
 function timer_start()
@@ -70,10 +76,8 @@ timer_start
 
 echo "Cloning modules..."
 update_modules
+build_freetype
 echo "Cloning modules completed."
-echo "Removing garbage in modules..."
-remove_garbage_in_modules
-echo "Removing garbage in modules was completed."
 
 timer_end
 timer_print_result

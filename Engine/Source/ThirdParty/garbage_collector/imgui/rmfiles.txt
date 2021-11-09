@@ -1,8 +1,0 @@
-.editorconfig
-.gitattributes
-.gitignore
-LICENSE.txt
-misc/README.txt
-misc/freetype/README.md
-misc/debuggers/README.txt
-misc/cpp/README.txt
