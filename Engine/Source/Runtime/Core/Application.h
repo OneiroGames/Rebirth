@@ -5,12 +5,13 @@
 #ifndef REBIRTH_APPLICATION_H
 #define REBIRTH_APPLICATION_H
 
-#ifdef __MINGW64__
-#include "Engine/Platform/Windows/WindowsWindow.h"
+#include <Runtime/Platform/Platform.h>
+
+
+#ifdef RB_WINDOWS_PLATFORM
 #elif __linux__
 #include "Runtime/Platform/Linux/LinuxWindow.h"
 #endif
-
 
 #include "Runtime/OpenGL/Shader.h"
 #include "Runtime/OpenGL/VertexArray.h"
@@ -22,7 +23,6 @@
 
 #include "Editor/Lua/LuaTextBox.h"
 #include "Editor/Lua/LuaConfig.h"
-#include "Editor/Lua/LuaImage.h"
 
 #include "glm/glm/glm.hpp"
 #include "glm/glm/gtc/matrix_transform.hpp"
@@ -38,12 +38,13 @@ public:
     void Init();
     void Run();
 private:
-    bool UpdateImage(LuaImage* img, uint32_t& it, glm::mat4& MVP);
+    bool UpdateImage(std::pair<LuaScene*, LuaSprite*> imgs, uint32_t& it, glm::mat4& MVP);
 
     sol::state lua;
     VertexArray mVAO;
     VertexBuffer mVBO;
     IndexBuffer mEBO;
+
     WindowProperties mWindowProps{};
 
     uint32_t NewBGId{};

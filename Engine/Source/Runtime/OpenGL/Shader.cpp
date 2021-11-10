@@ -6,7 +6,6 @@
 #include <fstream>
 #include <sstream>
 #include "Shader.h"
-#include "glm/glm.hpp"
 
 unsigned int CreateVertexShader(const char* shaderSrc);
 unsigned int CreateFragmentShader(const char* shaderSrc);
@@ -154,6 +153,8 @@ void CheckCompileErrors(const uint32_t& shader, const char* type)
     }
 }
 
+#ifndef _MSC_BUILD
+
 template<>
 void Shader::SetUniform<float>(const std::string& uniformName, const float& value)
 {
@@ -177,3 +178,5 @@ void Shader::SetUniform<glm::mat4>(const std::string& uniformName, const glm::ma
 {
     glUniformMatrix4fv(GetUniformLocation(uniformName), 1, GL_FALSE, &value[0][0]);
 }
+
+#endif

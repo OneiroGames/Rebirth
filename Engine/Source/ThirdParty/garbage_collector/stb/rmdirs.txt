@@ -1,5 +1,0 @@
-.github
-data
-tests
-tools
-.git

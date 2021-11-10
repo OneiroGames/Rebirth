@@ -3,34 +3,37 @@
 //
 
 #include "Transition.h"
-#include "Editor/Lua/LuaImage.h"
+#include "Editor/Lua/LuaSprite.h"
+#include "Editor/Lua/LuaScene.h"
 #include "Runtime/Core/Core.h"
-extern std::deque<LuaImage*> images;
+
+extern std::deque<LuaSprite*> sprites;
+extern LuaScene* scene;
 
 void Transition::UpdateScene(const float& dt)
 {
-    if (mData.image->IsSprite())
+    if (!scene)
     {
         return;
     }
 
-    if (mData.type == TransitionTypes::NONE && mData.image->GetCurrentAlpha() <= 0.0f)
+    if (mData.type == TransitionTypes::NONE && scene->GetCurrentAlpha() <= 0.0f)
     {
-        mData.image->Load();
-        mData.image->SetAlpha(1.0f);
+        scene->Load();
+        scene->SetAlpha(1.0f);
     }
 
-    if (mData.type == TransitionTypes::DISSOLVE && mData.image->GetCurrentAlpha() < 1.0f)
+    if (mData.type == TransitionTypes::DISSOLVE && scene->GetCurrentAlpha() < 1.0f)
     {
         mTransition = true;
-        if (!mData.image->isLoaded())
+        if (!scene->isLoaded())
         {
-            mData.image->Load();
+            scene->Load();
         }
         else
         {
             mData.currentAlpha += dt * mData.speed;
-            mData.image->SetAlpha(mData.currentAlpha);
+            scene->SetAlpha(mData.currentAlpha);
         }
 
         if (mData.currentAlpha >= 1.0f)
@@ -41,14 +44,16 @@ void Transition::UpdateScene(const float& dt)
     }
 }
 
-bool Transition::isShowed()
+bool Transition::isShowed() const
 {
-    return mData.image->GetCurrentAlpha() >= 1.0f;
-}
-
-void Transition::SetImage(LuaImage* image)
-{
-    mData.image = image;
+    if (mData.sprite)
+    {
+        return mData.sprite->GetCurrentAlpha() >= 1.0f;
+    }
+    else if (mData.scene)
+    {
+        return mData.scene->GetCurrentAlpha() >= 1.0f;
+    }
 }
 
 void Transition::SetSpeed(const float& speed)
@@ -58,33 +63,35 @@ void Transition::SetSpeed(const float& speed)
 
 void Transition::SetType(const TransitionTypes& type)
 {
+    mData.currentAlpha = 0.0f;
+    mData.currentReAlpha = 1.0f;
     mData.type = type;
 }
 
 void Transition::UpdateSprite(const float& dt)
 {
-    if (!mData.image->IsSprite())
+    if (mData.sprite == nullptr)
     {
         return;
     }
 
-    if (mData.type == TransitionTypes::NONE && mData.image->GetCurrentAlpha() <= 0.0f)
+    if (mData.type == TransitionTypes::NONE && mData.sprite->GetCurrentAlpha() <= 0.0f)
     {
-        mData.image->Load();
-        mData.image->SetAlpha(1.0f);
+        mData.sprite->Load();
+        mData.sprite->SetAlpha(1.0f);
     }
 
-    if (mData.type == TransitionTypes::DISSOLVE && mData.image->GetCurrentAlpha() < 1.0f)
+    if (mData.type == TransitionTypes::DISSOLVE && mData.sprite->GetCurrentAlpha() < 1.0f)
     {
         mTransition = true;
-        if (!mData.image->isLoaded())
+        if (!mData.sprite->isLoaded())
         {
-            mData.image->Load();
+            mData.sprite->Load();
         }
         else
         {
             mData.currentAlpha += dt * (mData.speed + 0.5f);
-            mData.image->SetAlpha(mData.currentAlpha);
+            mData.sprite->SetAlpha(mData.currentAlpha);
         }
 
         if (mData.currentAlpha >= 1.0f)
@@ -97,27 +104,27 @@ void Transition::UpdateSprite(const float& dt)
 
 void Transition::UpdateReSprite(const float& dt)
 {
-    if (!mData.image->IsSprite())
+    if (!mData.scene)
     {
         return;
     }
 
-    if (mData.type == TransitionTypes::REDISSOLVE && mData.image->GetCurrentAlpha() > 0.0f)
+    if (mData.type == TransitionTypes::REDISSOLVE && mData.sprite->GetCurrentAlpha() > 0.0f)
     {
         mData.currentReAlpha -= dt * (mData.speed + 1.0f);
-        mData.image->SetAlpha(mData.currentReAlpha);
+        mData.sprite->SetAlpha(mData.currentReAlpha);
 
         mTransition = true;
 
-        if (mData.image->GetCurrentAlpha() < 0.0f)
+        if (mData.sprite->GetCurrentAlpha() < 0.0f)
         {
-            mData.image->UnLoad();
-            auto it = images.begin();
-            for (auto& img : images)
+            mData.sprite->UnLoad();
+            auto it = sprites.begin();
+            for (auto& img : sprites)
             {
-                if (img == mData.image)
+                if (img == mData.sprite)
                 {
-                    images.erase(it);
+                    sprites.erase(it);
                 }
                 it++;
             }
@@ -130,29 +137,36 @@ void Transition::UpdateReSprite(const float& dt)
 
 void Transition::UpdateReScene(const float& dt)
 {
-    if (mData.image->IsSprite())
+    if (mData.scene == nullptr)
     {
         return;
     }
 
-    if (mData.type == TransitionTypes::REDISSOLVE && mData.image->GetCurrentAlpha() > 0.0f)
+    if (mData.type == TransitionTypes::REDISSOLVE && mData.scene->GetCurrentAlpha() > 0.0f)
     {
         mTransition = true;
         mData.currentReAlpha -= dt * mData.speed;
-        mData.image->SetAlpha(mData.currentReAlpha);
+        mData.scene->SetAlpha(mData.currentReAlpha);
 
-        if (mData.image->GetCurrentAlpha() < 0.1f)
+        if (mData.scene->GetCurrentAlpha() < 0.1f)
         {
-            mData.image->UnLoad();
+            mData.scene->UnLoad();
             mData.currentReAlpha = 1.0f;
             mReSceneEnd = true;
             mData.currentAlpha = 0.0f;
-            images.erase(images.begin());
+            mData.scene = nullptr;
         }
     }
 }
 
-void Transition::SetNextImage(LuaImage* image)
+void Transition::SetSprite(LuaSprite* sprite)
 {
-    mData.nextImage = image;
+    mData.sprite = sprite;
+    mData.scene = nullptr;
+}
+
+void Transition::SetScene(LuaScene* scene)
+{
+    mData.sprite = nullptr;
+    mData.scene = scene;
 }

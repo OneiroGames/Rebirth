@@ -1,5 +1,0 @@
-.github
-examples
-docs
-backends/vulkan
-.git

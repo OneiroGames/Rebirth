@@ -5,8 +5,10 @@
 #include "Application.h"
 #include "Editor/Lua/LuaCore.h"
 #include "Runtime/Core/Core.h"
+
 extern std::vector<VNStatementInfo> StatementsList;
-extern std::deque<LuaImage*> images;
+extern std::deque<LuaSprite*> sprites;
+extern LuaScene* scene;
 
 /*#include "ImGui/imgui.h"
 #include "ImGui/backends/imgui_impl_glfw.h"
@@ -14,7 +16,7 @@ extern std::deque<LuaImage*> images;
 #include <GL/glu.h>*/
 
 double deltaTime = 0.0f;
-bool NextState = true;
+static bool NextState = true;
 bool LeftButtonPress = false;
 bool isStartGame = true;
 
@@ -31,8 +33,8 @@ void Application::Run()
     double last = 0.0f, first = 0.0f;
     bool skip = false;
 
-    mTextRender.Init("font.ttf", 34);
-    mTextNameRender.Init("font.ttf", 36);
+    mTextRender.Init("game/data/fonts/font.ttf", 34);
+    mTextNameRender.Init("game/data/fonts/font.ttf", 36);
     float timerToNextChar = 0.02f;
 
     /*bool st = true;
@@ -92,20 +94,20 @@ git clone --recurse-submodules $(sed -n "$i, 1p" modules.txt)
 
         mVAO.Bind();
 
-        if (!images.empty() && NextState && !images[images.size() - 1]->GetTransition()->isShowed() && !images[0]->GetTransition()->ReSceneEnd())
+        if (scene && NextState && !sprites[sprites.size() - 1]->GetTransition()->isShowed() && !scene->GetTransition()->ReSceneEnd())
         {
             NextState = false;
         }
 
         if (NextState && mTextBox.ReDissolveEnabled() || mTextBox.DissolveEnabled())
         {
-            if (!images.empty() && images[images.size() - 1]->GetTransition()->isShowed())
+            if (scene && sprites[sprites.size() - 1]->GetTransition()->isShowed())
             {
                 NextState = false;
             }
         }
 
-        if (!images.empty() && images[images.size() - 1]->GetTransition()->isShowed() && images[0]->GetTransition()->isShowed() && !mTextBox.ReDissolveEnabled() && !mTextBox.DissolveEnabled())
+        if (!sprites.empty() && sprites[sprites.size() - 1]->GetTransition()->isShowed() && scene->GetTransition()->isShowed() && !mTextBox.ReDissolveEnabled() && !mTextBox.DissolveEnabled())
         {
             if (timerToNextChar < 0.0f)
             {
@@ -137,34 +139,44 @@ git clone --recurse-submodules $(sed -n "$i, 1p" modules.txt)
 
         NextStatement();
 
-        uint32_t i = 0;
-        for (auto& img : images)
+        if (scene->isLoaded())
         {
-            if (!UpdateImage(img, i, MVP))
+            scene->GetShader()->use();
+            scene->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
+            scene->GetTexture()->Bind();
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+        }
+
+        uint32_t i = 0;
+        for (auto& img : sprites)
+        {
+            if (!UpdateImage(std::make_pair(scene, img), i, MVP))
             {
                 continue;
             }
             i++;
         }
 
+        scene->GetTransition()->UpdateScene(deltaTime);
+
         if (mTextBox.ReDissolveEnabled())
         {
-            mTextBox.GetImage()->GetShader()->use();
-            mTextBox.GetImage()->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
-            mTextBox.GetImage()->GetTexture()->Bind();
+            mTextBox.GetSprite()->GetShader()->use();
+            mTextBox.GetSprite()->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
+            mTextBox.GetSprite()->GetTexture()->Bind();
 
             glDrawArrays(GL_TRIANGLES, 0, 6);
 
             mTextBox.Update(deltaTime);
         }
 
-        if (!images.empty() && images[images.size() - 1]->GetTransition()->isShowed() && images[0]->GetTransition()->isShowed())
+        if (!sprites.empty() && sprites[sprites.size() - 1]->GetTransition()->isShowed() && scene->GetTransition()->isShowed())
         {
             if (!mTextBox.ReDissolveEnabled())
             {
-                mTextBox.GetImage()->GetShader()->use();
-                mTextBox.GetImage()->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
-                mTextBox.GetImage()->GetTexture()->Bind();
+                mTextBox.GetSprite()->GetShader()->use();
+                mTextBox.GetSprite()->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
+                mTextBox.GetSprite()->GetTexture()->Bind();
 
                 glDrawArrays(GL_TRIANGLES, 0, 6);
 
@@ -204,7 +216,7 @@ git clone --recurse-submodules $(sed -n "$i, 1p" modules.txt)
 void Application::Init()
 {
     lua.open_libraries(sol::lib::base);
-    mConfigs.Run(lua, "config.lua");
+    mConfigs.Run(lua, "game/data/scripts/config.lua");
     mWindowProps = WindowHnd::CreateWindow(mConfigs.GetWindowWidth(), mConfigs.GetWindowHeight(), mConfigs.GetWindowTitle().c_str());
 
     glfwSetMouseButtonCallback(mWindowProps.window, mouse_button_callback);
@@ -213,11 +225,11 @@ void Application::Init()
     lua = sol::state();
     lua.open_libraries(sol::lib::base, sol::lib::package);
     LuaCore::Run(lua);
-    lua.require_file("resources", "resources.lua");
+    lua.require_file("resources", "game/data/scripts/resources.lua");
 
-    lua.do_file("script.lua");
+    lua.do_file("game/data/scripts/script.lua");
 
-    mTextBox.Init("textbox.png");
+    mTextBox.Init("game/data/ui/textbox.png");
 
     constexpr const float vertices[] = {
             1920.0f,  1080.0f, 0.0f,
@@ -251,7 +263,7 @@ void Application::NextStatement()
 {
     if (NextState && mCurrentIterator != StatementsList.size())
     {
-        start:
+    start:
         if (mCurrentIterator >= StatementsList.size()) goto end;
 
         switch (StatementsList[mCurrentIterator].command)
@@ -268,14 +280,14 @@ void Application::NextStatement()
         }
         case VNStatements::SCENE:
         {
-            if (!images.empty())
+            if (scene)
             {
-                images[0]->GetTransition()->SetType(TransitionTypes::REDISSOLVE);
+                scene->GetTransition()->SetType(TransitionTypes::REDISSOLVE);
                 NewBGId = mCurrentIterator;
             }
             else
             {
-                images.push_front(StatementsList[mCurrentIterator].image);
+                scene = StatementsList[mCurrentIterator].scene;
             }
 
             if (!isStartGame)
@@ -291,20 +303,20 @@ void Application::NextStatement()
             goto start;
         }
         case VNStatements::SHOWSPRITE:
-            images.push_back(StatementsList[mCurrentIterator].image);
-            StatementsList[mCurrentIterator].image->GetTransition()->SetType(TransitionTypes::DISSOLVE);
+            sprites.push_back(StatementsList[mCurrentIterator].sprite);
+            StatementsList[mCurrentIterator].sprite->GetTransition()->SetType(TransitionTypes::DISSOLVE);
             mCurrentIterator++;
             NextState = false;
-            if (mTextBox.isShowed() >= 1.0f && !isStartGame)
+            if (mTextBox.isShowed() && !isStartGame)
             {
                 mTextBox.SetReDissolveEnabled();
             }
             goto start;
         case VNStatements::HIDESPRITE:
         {
-            for (auto& img : images)
+            for (auto& img : sprites)
             {
-                if (img == StatementsList[mCurrentIterator].image)
+                if (img == StatementsList[mCurrentIterator].sprite)
                 {
                     img->GetTransition()->SetType(TransitionTypes::REDISSOLVE);
                 }
@@ -326,13 +338,21 @@ void Application::NextStatement()
     }
 }
 
-bool Application::UpdateImage(LuaImage* img, uint32_t& it, glm::mat4& MVP)
+bool Application::UpdateImage(std::pair<LuaScene*, LuaSprite*> imgs, uint32_t& it, glm::mat4& MVP)
 {
-    if (img->isLoaded())
+    /*if (imgs.first && imgs.first->isLoaded())
     {
-        img->GetShader()->use();
-        img->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
-        img->GetTexture()->Bind();
+        imgs.first->GetShader()->use();
+        imgs.first->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
+        imgs.first->GetTexture()->Bind();
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+    }*/
+
+    if (imgs.second && imgs.second->isLoaded())
+    {
+        imgs.second->GetShader()->use();
+        imgs.second->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
+        imgs.second->GetTexture()->Bind();
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
 
@@ -342,31 +362,28 @@ bool Application::UpdateImage(LuaImage* img, uint32_t& it, glm::mat4& MVP)
     }
     else
     {
-        img->GetTransition()->UpdateReSprite(deltaTime);
-        img->GetTransition()->UpdateReScene(deltaTime);
+        imgs.second->GetTransition()->UpdateReSprite(deltaTime);
+        scene->GetTransition()->UpdateReScene(deltaTime);
 
-        if (img->GetTransition()->ReSceneEnd() && NewBGId > 0)
+        if (scene->GetTransition()->ReSceneEnd() && NewBGId > 0)
         {
-            images.push_front(StatementsList[NewBGId].image);
-            images.begin().operator*()->GetTransition()->SetType(TransitionTypes::DISSOLVE);
+            StatementsList[NewBGId].scene->GetTransition()->SetType(TransitionTypes::DISSOLVE);
+            scene->Destroy();
+            scene = StatementsList[NewBGId].scene;
             NewBGId = 0;
         }
 
-        if (images[0]->GetTransition()->isShowed())
+        if (scene->GetTransition()->isShowed())
         {
-            if (!images[it]->GetTransition()->isShowed())
+            if (!sprites[it]->GetTransition()->isShowed())
             {
-                images[it]->GetTransition()->UpdateSprite(deltaTime);
+                sprites[it]->GetTransition()->UpdateSprite(deltaTime);
                 return false;
             }
             else
             {
-                images[it]->GetTransition()->UpdateSprite(deltaTime);
+                sprites[it]->GetTransition()->UpdateSprite(deltaTime);
             }
-        }
-        else
-        {
-            img->GetTransition()->UpdateScene(deltaTime);
         }
     }
 

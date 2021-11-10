@@ -7,7 +7,8 @@
 
 #include <string>
 
-class LuaImage;
+class LuaSprite;
+class LuaScene;
 
 enum class TransitionTypes
 {
@@ -21,15 +22,15 @@ class Transition
 public:
     Transition() = default;
     ~Transition() = default;
-    void SetImage(LuaImage* image);
-    void SetNextImage(LuaImage* image);
+    void SetSprite(LuaSprite* sprite);
+    void SetScene(LuaScene* scene);
     void SetSpeed(const float& speed);
     void SetType(const TransitionTypes& type);
     void UpdateScene(const float& dt);
     void UpdateSprite(const float& dt);
     void UpdateReSprite(const float& dt);
     void UpdateReScene(const float& dt);
-    bool isShowed();
+    bool isShowed() const;
     bool ReSceneEnd() { return mReSceneEnd; }
 
     bool isShowing() { return mTransition; }
@@ -39,11 +40,12 @@ public:
 private:
     bool mTransition = false;
     bool mTransitionRe = false;
+
     struct TransitionData
     {
         float speed = 1.0f;
-        LuaImage* image;
-        LuaImage* nextImage;
+        LuaSprite* sprite;
+        LuaScene* scene;
         TransitionTypes type = TransitionTypes::DISSOLVE;
         float currentAlpha = 0.0f;
         float currentReAlpha = 1.0f;

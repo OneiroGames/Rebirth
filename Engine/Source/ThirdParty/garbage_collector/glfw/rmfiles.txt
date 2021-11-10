@@ -1,5 +1,0 @@
-.appveyor.yml
-.gitattributes
-.gitignore
-.mailmap
-*.md

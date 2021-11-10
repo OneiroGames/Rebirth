@@ -41,4 +41,5 @@ const char* fragmentShaderSrc = R"(
     )";
 
 std::vector<VNStatementInfo> StatementsList;
-std::deque<LuaImage*> images;
+std::deque<LuaSprite*> sprites;
+LuaScene* scene = nullptr;

@@ -44,14 +44,14 @@ const char* LTBFragmentShaderSrc = R"(
 
 void LuaTextBox::Init(const std::string& pathToImg)
 {
-    mTextBoxImage = LuaImage(pathToImg);
-    mTextBoxImage.GetTransition()->SetType(TransitionTypes::DISSOLVE);
-    mTextBoxImage.GetShader()->LoadFromSource(LTBVertexShaderSrc, LTBFragmentShaderSrc);
-    mTextBoxImage.GetTexture()->Load(pathToImg);
+    mTextBoxSprite = LuaSprite(pathToImg);
+    mTextBoxSprite.GetTransition()->SetType(TransitionTypes::DISSOLVE);
+    mTextBoxSprite.GetShader()->LoadFromSource(LTBVertexShaderSrc, LTBFragmentShaderSrc);
+    mTextBoxSprite.GetTexture()->Load(pathToImg);
 
-    mTextBoxImage.GetShader()->use();
-    mTextBoxImage.GetShader()->SetUniform<int>("uTextureWidth", mTextBoxImage.GetTexture()->width);
-    mTextBoxImage.GetShader()->SetUniform<int>("uTextureHeight", mTextBoxImage.GetTexture()->height);
+    mTextBoxSprite.GetShader()->use();
+    mTextBoxSprite.GetShader()->SetUniform<int>("uTextureWidth", mTextBoxSprite.GetTexture()->width);
+    mTextBoxSprite.GetShader()->SetUniform<int>("uTextureHeight", mTextBoxSprite.GetTexture()->height);
 }
 
 void LuaTextBox::Update(const float& dt)
@@ -59,25 +59,25 @@ void LuaTextBox::Update(const float& dt)
     if (mReDissolve && !mDissolve)
     {
         mCurrentReAlpha -= 1.5f * dt;
-        mTextBoxImage.SetAlpha(mCurrentReAlpha);
+        mTextBoxSprite.SetAlpha(mCurrentReAlpha);
 
         mReDissolve = true;
 
-        if (mTextBoxImage.GetCurrentAlpha() <= 0.0f)
+        if (mTextBoxSprite.GetCurrentAlpha() <= 0.0f)
         {
             mCurrentReAlpha = 1.0f;
             mCurrentAlpha = 0.0f;
             mReDissolve = false;
         }
     }
-    else if (mTextBoxImage.GetCurrentAlpha() <= 1.0f)
+    else if (mTextBoxSprite.GetCurrentAlpha() <= 1.0f)
     {
         mCurrentAlpha += dt * 1.5f;
-        mTextBoxImage.SetAlpha(mCurrentAlpha);
+        mTextBoxSprite.SetAlpha(mCurrentAlpha);
 
         mDissolve = true;
 
-        if (mTextBoxImage.GetCurrentAlpha() > 1.0f)
+        if (mTextBoxSprite.GetCurrentAlpha() > 1.0f)
         {
             mCurrentAlpha = 0.0f;
             mCurrentReAlpha = 1.0f;
@@ -88,9 +88,9 @@ void LuaTextBox::Update(const float& dt)
 
 void LuaTextBox::Draw(glm::mat4& MVP)
 {
-    mTextBoxImage.GetShader()->use();
-    mTextBoxImage.GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
-    mTextBoxImage.GetTexture()->Bind();
+    mTextBoxSprite.GetShader()->use();
+    mTextBoxSprite.GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
+    mTextBoxSprite.GetTexture()->Bind();
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
