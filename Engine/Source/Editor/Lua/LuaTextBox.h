@@ -6,7 +6,7 @@
 #define REBIRTH_LUATEXTBOX_H
 
 
-#include "Editor/Lua/LuaSprite.h"
+#include "Editor/Lua/LuaImage.h"
 #include "glm/glm.hpp"
 
 class LuaTextBox
@@ -17,9 +17,9 @@ public:
 
     void Init(const std::string& pathToImg);
 
-    LuaSprite* GetSprite()
+    LuaImage* GetImage()
     {
-        return &mTextBoxSprite;
+        return &mTextBoxImage;
     }
 
     [[nodiscard]] bool DissolveEnabled() const
@@ -34,7 +34,7 @@ public:
 
     [[nodiscard]] bool isShowed() const
     {
-        return mTextBoxSprite.GetCurrentAlpha() > 1.0f;
+        return mTextBoxImage.GetCurrentAlpha() > 1.0f;
     }
 
     void Update(const float& dt);
@@ -48,7 +48,7 @@ private:
     float mCurrentAlpha = 0.0f;
     float mCurrentReAlpha = 1.0f;
 
-    LuaSprite mTextBoxSprite;
+    LuaImage mTextBoxImage;
 };
 
 

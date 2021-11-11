@@ -9,8 +9,7 @@
 #include <vector>
 #include <deque>
 
-#include "Editor/Lua/LuaSprite.h"
-#include "Editor/Lua/LuaScene.h"
+#include "Editor/Lua/LuaImage.h"
 
 enum class VNStatements
 {
@@ -24,8 +23,7 @@ struct VNStatementInfo
 {
     const VNStatements command;
     std::string content;
-    LuaScene* scene;
-    LuaSprite* sprite;
+    LuaImage* image;
 };
 
 #endif //REBIRTH_CORE_H

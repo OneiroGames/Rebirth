@@ -2,8 +2,9 @@
 // Created by dezlow on 17.09.2021.
 //
 
-#ifdef _WIN32
+#ifdef __MINGW64__
 
+#include <stdexcept>
 #include "WindowsWindow.h"
 
 WindowProperties WindowHnd::CreateWindow(const uint32_t& width, const uint32_t& height, const char* title)
@@ -12,7 +13,6 @@ WindowProperties WindowHnd::CreateWindow(const uint32_t& width, const uint32_t& 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_SAMPLES, 2);
 
     WindowProperties windowProps {
             glfwCreateWindow((int)width, (int)height, title, nullptr, nullptr),
@@ -20,16 +20,13 @@ WindowProperties WindowHnd::CreateWindow(const uint32_t& width, const uint32_t& 
     };
 
     if (windowProps.window == nullptr)
-        return WindowProperties{};
+        std::runtime_error("Failed to create window!");
 
     glfwMakeContextCurrent(windowProps.window);
     glfwSwapInterval(1);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-        return WindowProperties{};
-
-    // FOR MSAA
-    glEnable(GL_SAMPLES);
+        std::runtime_error("Failed to init glad!");
 
     return windowProps;
 }

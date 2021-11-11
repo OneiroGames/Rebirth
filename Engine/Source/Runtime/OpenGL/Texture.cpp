@@ -114,7 +114,7 @@ void Texture::Load(const std::string& path)
     }
     else
     {
-        std::cout << "Failed to load texture! Path: "  << path << '\n';
+        std::cout << "Failed to load texture! Path: " << path << '\n';
     }
     stbi_image_free(data);
 }

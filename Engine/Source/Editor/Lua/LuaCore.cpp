@@ -5,19 +5,18 @@
 #include <vector>
 #include "LuaCore.h"
 #include "Runtime/Core/Core.h"
-#include "Editor/Lua/LuaScene.h"
-#include "Editor/Lua/LuaSprite.h"
-
 extern std::vector<VNStatementInfo> StatementsList;
+
+#include "Editor/Lua/LuaImage.h"
 
 void text(const std::string& text)
 {
-    StatementsList.push_back({VNStatements::TEXT, text, nullptr, nullptr});
+    StatementsList.push_back({VNStatements::TEXT, text});
 }
 
-void scene(LuaScene* scene)
+void scene(LuaImage* img)
 {
-    StatementsList.push_back({VNStatements::SCENE, {}, scene, nullptr});
+    StatementsList.push_back({VNStatements::SCENE, {}, img});
 }
 
 void LuaCore::Run(sol::state& lua)
@@ -25,18 +24,18 @@ void LuaCore::Run(sol::state& lua)
     auto rebirth = lua.create_named_table("rebirth");
     rebirth.set_function("DisplayText", text);
     lua.set_function("scene", scene);
-    lua.new_usertype<LuaScene>("Scene", sol::call_constructor,
+    lua.new_usertype<LuaImage>("Image", sol::call_constructor,
                                sol::factories([](const char* path) {
-                                   return std::make_shared<LuaScene>(path);
+                                   return std::make_shared<LuaImage>(path);
                                }));
 
-    lua.new_usertype<LuaSprite>("Sprite", sol::call_constructor,
+    lua.new_usertype<LuaImage>("Sprite", sol::call_constructor,
                                sol::factories([](const char* path) {
-                                   return std::make_shared<LuaSprite>(path);
-                               }), "show", &LuaSprite::Show, "hide", &LuaSprite::Hide);
+                                   return std::make_shared<LuaImage>(path);
+                               }), "show", &LuaImage::show, "hide", &LuaImage::hide);
 
     lua.script("function Class()\n"
-               "local class = {}\n"
+               "  local class = {}\n"
                "\tlocal mClass = {}\n"
                "\n"
                "\tclass.__index = class\n"

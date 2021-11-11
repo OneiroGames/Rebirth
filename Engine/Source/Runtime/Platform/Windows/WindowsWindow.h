@@ -5,9 +5,9 @@
 #ifndef REBIRTH_WINDOWSWINDOW_H
 #define REBIRTH_WINDOWSWINDOW_H
 
-#ifdef _WIN32
+#ifdef __MINGW64__
 
-#include "Runtime/Platform/Platform.h"
+#include "Engine/Platform/Platform.h"
 
 class WindowHnd
 {
