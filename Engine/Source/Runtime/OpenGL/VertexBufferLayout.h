@@ -11,7 +11,7 @@ class VertexBufferLayout
 {
 public:
     template<class T>
-    static void Push(const uint32_t& id, const uint32_t& size, const uint32_t& stride, const uint32_t& pointer) {}
+    static void Push(const uint32_t id, const uint32_t size, const uint32_t stride, const uint32_t pointer) {}
 };
 
 

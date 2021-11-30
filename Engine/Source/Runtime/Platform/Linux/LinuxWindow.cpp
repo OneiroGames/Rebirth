@@ -26,12 +26,7 @@ WindowProperties WindowHnd::CreateWindow(const uint32_t& width, const uint32_t& 
     glfwMakeContextCurrent(windowProps.window);
     glfwSwapInterval(1);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::runtime_error("Failed to init glad!");
-    }
-
-    glEnable(GL_SAMPLES);
+    gl::Enable(gl::SAMPLES);
 
     return windowProps;
 }

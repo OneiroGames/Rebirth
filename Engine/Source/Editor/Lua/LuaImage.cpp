@@ -29,8 +29,8 @@ void LuaImage::Load()
     mImageTexture.Load(mImagePath);
 
     mImageShader.use();
-    mImageShader.SetUniform<int>("uTextureWidth", mImageTexture.width);
-    mImageShader.SetUniform<int>("uTextureHeight", mImageTexture.height);
+    mImageShader.SetUniform<int>("uTextureWidth", mImageTexture.GetWidth());
+    mImageShader.SetUniform<int>("uTextureHeight", mImageTexture.GetHeight());
 }
 
 void LuaImage::UnLoad()

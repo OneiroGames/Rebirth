@@ -12,18 +12,20 @@ class Texture
 {
 public:
     Texture() = default;
-    ~Texture() = default;
-
     explicit Texture(const std::string& texturePath);
+    ~Texture();
 
     void Bind() const;
-    static void UnBind() ;
-
-    int width{}, height{};
+    void UnBind() const;
 
     void Load(const std::string& path);
+
     void UnLoad();
+
+    [[nodiscard]] int GetWidth() const { return mTextureWidth; }
+    [[nodiscard]] int GetHeight() const { return mTextureHeight; }
 private:
+    int mTextureWidth{}, mTextureHeight{};
     uint32_t mTextureID{};
 };
 

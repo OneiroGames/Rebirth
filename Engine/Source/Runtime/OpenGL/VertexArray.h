@@ -7,17 +7,18 @@
 
 
 #include <cstdint>
+#include "OpenGL/ogl4.5.hpp"
 
 class VertexArray
 {
 public:
     VertexArray() = default;
-    ~VertexArray();
+    ~VertexArray() { gl::DeleteVertexArrays(1, &mVertexArrayID); }
 
-    void Init();
+    void Init() { gl::GenVertexArrays(1, &mVertexArrayID); }
 
-    void Bind() const;
-    static void UnBind();
+    void Bind() const { gl::BindVertexArray(mVertexArrayID); }
+    void UnBind() { gl::BindVertexArray(0); }
 private:
     uint32_t mVertexArrayID{};
 };

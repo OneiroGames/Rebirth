@@ -22,13 +22,11 @@ public:
     Transition() = default;
     ~Transition() = default;
     void SetImage(LuaImage* image);
-    void SetNextImage(LuaImage* image);
-    void SetSpeed(const float& speed);
     void SetType(const TransitionTypes& type);
-    void UpdateScene(const float& dt);
-    void UpdateSprite(const float& dt);
-    void UpdateReSprite(const float& dt);
-    void UpdateReScene(const float& dt);
+    void UpdateScene(const float dt);
+    void UpdateSprite(const float dt);
+    void UpdateReSprite(const float dt);
+    void UpdateReScene(const float dt);
     bool isShowed();
     bool ReSceneEnd() { return mReSceneEnd; }
 
@@ -43,7 +41,6 @@ private:
     {
         float speed = 1.0f;
         LuaImage* image;
-        LuaImage* nextImage;
         TransitionTypes type = TransitionTypes::DISSOLVE;
         float currentAlpha = 0.0f;
         float currentReAlpha = 1.0f;

@@ -3,9 +3,8 @@
 //
 
 #include <iostream>
-#include <fstream>
 #include "Texture.h"
-#include "glad/glad.h"
+#include "OpenGL/ogl4.5.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
@@ -13,28 +12,28 @@
 Texture::Texture(const std::string& texturePath)
 {
     int nrChannels;
-    uint8_t* data = stbi_load(texturePath.c_str(), &width, &height, &nrChannels, 0);
+    uint8_t* data = stbi_load(texturePath.c_str(), &mTextureWidth, &mTextureHeight, &nrChannels, 0);
 
     if (data)
     {
-        glGenTextures(1, &mTextureID);
+        gl::GenTextures(1, &mTextureID);
         Bind();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_S, gl::CLAMP_TO_EDGE);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_T, gl::CLAMP_TO_EDGE);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::LINEAR_MIPMAP_LINEAR);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::LINEAR_MIPMAP_LINEAR);
         switch (nrChannels)
         {
         case 4:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            gl::TexImage2D(gl::TEXTURE_2D, 0, gl::RGBA, mTextureWidth, mTextureWidth, 0, gl::RGBA, gl::UNSIGNED_BYTE, data);
             break;
         case 3:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            gl::TexImage2D(gl::TEXTURE_2D, 0, gl::RGB, mTextureWidth, mTextureWidth, 0, gl::RGB, gl::UNSIGNED_BYTE, data);
             break;
         default:
             break;
         }
-        glGenerateMipmap(GL_TEXTURE_2D);
+        gl::GenerateMipmap(gl::TEXTURE_2D);
     }
     else
     {
@@ -45,12 +44,12 @@ Texture::Texture(const std::string& texturePath)
 
 void Texture::Bind() const
 {
-    glBindTexture(GL_TEXTURE_2D, mTextureID);
+    gl::BindTexture(gl::TEXTURE_2D, mTextureID);
 }
 
-void Texture::UnBind()
+void Texture::UnBind() const
 {
-    glBindTexture(GL_TEXTURE_2D, 0);
+    gl::BindTexture(gl::TEXTURE_2D, 0);
 }
 
 /*#include <algorithm>
@@ -70,7 +69,7 @@ std::string ToHex(const std::string& s, bool upper_case /* = true )
 void Texture::Load(const std::string& path)
 {
     int nrChannels;
-    unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+    unsigned char* data = stbi_load(path.c_str(), &mTextureWidth, &mTextureHeight, &nrChannels, 0);
 
     /*std::ifstream f(path);
     std::ofstream file(path + "c");
@@ -93,24 +92,24 @@ void Texture::Load(const std::string& path)
 
     if (data)
     {
-        glGenTextures(1, &mTextureID);
+        gl::GenTextures(1, &mTextureID);
         Bind();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_S, gl::CLAMP_TO_EDGE);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_T, gl::CLAMP_TO_EDGE);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::LINEAR);
         switch (nrChannels)
         {
         case 4:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            gl::TexImage2D(gl::TEXTURE_2D, 0, gl::RGBA, mTextureWidth, mTextureHeight, 0, gl::RGBA, gl::UNSIGNED_BYTE, data);
             break;
         case 3:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            gl::TexImage2D(gl::TEXTURE_2D, 0, gl::RGB, mTextureWidth, mTextureHeight, 0, gl::RGB, gl::UNSIGNED_BYTE, data);
             break;
         default:
             break;
         }
-        glGenerateMipmap(GL_TEXTURE_2D);
+        gl::GenerateMipmap(gl::TEXTURE_2D);
     }
     else
     {
@@ -121,5 +120,10 @@ void Texture::Load(const std::string& path)
 
 void Texture::UnLoad()
 {
-    glDeleteTextures(1, &mTextureID);
+    gl::DeleteTextures(1, &mTextureID);
+}
+
+Texture::~Texture()
+{
+    gl::DeleteTextures(1, &mTextureID);
 }

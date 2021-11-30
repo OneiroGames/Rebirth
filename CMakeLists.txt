@@ -16,6 +16,9 @@ include_directories(Engine/Source/)
 
 find_package(OpenGL REQUIRED)
 
+file(GLOB OGLLG_SRC
+        "Engine/Source/ThirdParty/OpenGL/ogl4.5.cpp")
+
 file(GLOB RebirthSRC
         "Engine/Source/Runtime/*.h"
         "Engine/Source/Runtime/*.cpp"
@@ -32,17 +35,18 @@ file(GLOB RebirthSRC
 
 add_executable(${CMAKE_PROJECT_NAME}
         ${RebirthSRC}
+        ${OGLLG_SRC}
         )
 
 add_subdirectory(Engine/Source/ThirdParty/glfw)
-add_subdirectory(Engine/Source/ThirdParty/glad)
+#add_subdirectory(Engine/Source/ThirdParty/glad)
 add_subdirectory(Engine/Source/ThirdParty/glm)
 add_subdirectory(Engine/Source/ThirdParty/freetype)
 add_subdirectory(Engine/Source/ThirdParty/lua51)
 #add_subdirectory(Engine/Source/ThirdParty/spdlog)
 target_link_libraries(${CMAKE_PROJECT_NAME}
         glfw
-        glad
+        #glad
         glm
         freetype
         OpenGL::GL

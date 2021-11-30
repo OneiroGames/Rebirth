@@ -7,7 +7,7 @@
 #include "Runtime/Core/Core.h"
 extern std::deque<LuaImage*> images;
 
-void Transition::UpdateScene(const float& dt)
+void Transition::UpdateScene(const float dt)
 {
     if (mData.image->IsSprite())
     {
@@ -51,17 +51,12 @@ void Transition::SetImage(LuaImage* image)
     mData.image = image;
 }
 
-void Transition::SetSpeed(const float& speed)
-{
-    mData.speed = speed;
-}
-
 void Transition::SetType(const TransitionTypes& type)
 {
     mData.type = type;
 }
 
-void Transition::UpdateSprite(const float& dt)
+void Transition::UpdateSprite(const float dt)
 {
     if (!mData.image->IsSprite())
     {
@@ -95,7 +90,7 @@ void Transition::UpdateSprite(const float& dt)
     }
 }
 
-void Transition::UpdateReSprite(const float& dt)
+void Transition::UpdateReSprite(const float dt)
 {
     if (!mData.image->IsSprite())
     {
@@ -128,7 +123,7 @@ void Transition::UpdateReSprite(const float& dt)
     }
 }
 
-void Transition::UpdateReScene(const float& dt)
+void Transition::UpdateReScene(const float dt)
 {
     if (mData.image->IsSprite())
     {
@@ -150,9 +145,4 @@ void Transition::UpdateReScene(const float& dt)
             images.erase(images.begin());
         }
     }
-}
-
-void Transition::SetNextImage(LuaImage* image)
-{
-    mData.nextImage = image;
 }

@@ -6,16 +6,23 @@
 #define REBIRTH_INDEXBUFFER_H
 
 #include <cstdint>
+#include "OpenGL/ogl4.5.hpp"
 
 class IndexBuffer
 {
 public:
     IndexBuffer() = default;
-    void Create(const uint32_t& size, const uint32_t *pIndices);
-    ~IndexBuffer();
+    ~IndexBuffer() { gl::DeleteBuffers(1, &mIndexBufferID); }
 
-    void Bind() const;
-    static void UnBind();
+    void Create(const uint32_t size, const uint32_t *pIndices)
+    {
+        gl::GenBuffers(1, &mIndexBufferID);
+        Bind();
+        gl::BufferData(gl::ELEMENT_ARRAY_BUFFER, size, pIndices, gl::STATIC_DRAW);
+    }
+
+    void Bind() const { gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, mIndexBufferID); }
+    void UnBind() const { gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, 0); }
 private:
     uint32_t mIndexBufferID{};
 };

@@ -12,8 +12,8 @@ class VertexBuffer
 {
 public:
     VertexBuffer() = default;
-    VertexBuffer(const uint32_t& size, const float* pVertices, bool dynamic_draw = false);
-    void Create(const uint32_t& size, const float* pVertices, bool dynamic_draw = false);
+    VertexBuffer(uint32_t size, const float* pVertices, bool dynamic_draw = false);
+    void Create(uint32_t size, const float* pVertices, bool dynamic_draw = false);
     ~VertexBuffer();
 
     void Bind() const;

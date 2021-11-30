@@ -50,8 +50,8 @@ void LuaTextBox::Init(const std::string& pathToImg)
     mTextBoxImage.GetTexture()->Load(pathToImg);
 
     mTextBoxImage.GetShader()->use();
-    mTextBoxImage.GetShader()->SetUniform<int>("uTextureWidth", mTextBoxImage.GetTexture()->width);
-    mTextBoxImage.GetShader()->SetUniform<int>("uTextureHeight", mTextBoxImage.GetTexture()->height);
+    mTextBoxImage.GetShader()->SetUniform<int>("uTextureWidth", mTextBoxImage.GetTexture()->GetWidth());
+    mTextBoxImage.GetShader()->SetUniform<int>("uTextureHeight", mTextBoxImage.GetTexture()->GetHeight());
 }
 
 void LuaTextBox::Update(const float& dt)
@@ -92,7 +92,7 @@ void LuaTextBox::Draw(glm::mat4& MVP)
     mTextBoxImage.GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
     mTextBoxImage.GetTexture()->Bind();
 
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    gl::DrawArrays(gl::TRIANGLES, 0, 6);
 }
 
 void LuaTextBox::SetDissolveEnabled()

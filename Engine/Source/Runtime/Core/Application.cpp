@@ -49,8 +49,8 @@ void Application::Run()
     {
         glfwPollEvents();
 
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        gl::ClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
         /*double CursorPosX{}, CursorPosY{};
 
@@ -76,7 +76,7 @@ git clone --recurse-submodules $(sed -n "$i, 1p" modules.txt)
         }*/
 
         glfwGetFramebufferSize(mWindowProps.window, &mWindowProps.width, &mWindowProps.height);
-        glViewport(0, 0, mWindowProps.width, mWindowProps.height);
+        gl::Viewport(0, 0, mWindowProps.width, mWindowProps.height);
 
         double currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -153,7 +153,7 @@ git clone --recurse-submodules $(sed -n "$i, 1p" modules.txt)
             mTextBox.GetImage()->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
             mTextBox.GetImage()->GetTexture()->Bind();
 
-            glDrawArrays(GL_TRIANGLES, 0, 6);
+            gl::DrawArrays(gl::TRIANGLES, 0, 6);
 
             mTextBox.Update(deltaTime);
         }
@@ -166,7 +166,7 @@ git clone --recurse-submodules $(sed -n "$i, 1p" modules.txt)
                 mTextBox.GetImage()->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
                 mTextBox.GetImage()->GetTexture()->Bind();
 
-                glDrawArrays(GL_TRIANGLES, 0, 6);
+                gl::DrawArrays(gl::TRIANGLES, 0, 6);
 
                 mTextBox.Update(deltaTime);
             }
@@ -230,9 +230,8 @@ void Application::Init()
     mVBO.Create(sizeof(vertices), vertices);
     VertexBufferLayout::Push<float>(0,3,3,0);
 
-    VertexArray::UnBind();
-    VertexBuffer::UnBind();
-
+    mVAO.UnBind();
+    mVBO.UnBind();
 
     sol::protected_function LabelStart = lua["label_start"];
 
@@ -241,10 +240,10 @@ void Application::Init()
         LabelStart();
     }
 
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_ALWAYS);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    gl::Enable(gl::DEPTH_TEST);
+    gl::DepthFunc(gl::ALWAYS);
+    gl::Enable(gl::BLEND);
+    gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
 }
 
 void Application::NextStatement()
@@ -278,13 +277,8 @@ void Application::NextStatement()
                 images.push_front(StatementsList[mCurrentIterator].image);
             }
 
-            if (!isStartGame)
-            {
-                if (mTextBox.isShowed())
-                {
-                    mTextBox.SetReDissolveEnabled();
-                }
-            }
+            if (!isStartGame && mTextBox.isShowed())
+                mTextBox.SetReDissolveEnabled();
 
             mCurrentIterator++;
             NextState = false;
@@ -333,7 +327,7 @@ bool Application::UpdateImage(LuaImage* img, uint32_t& it, glm::mat4& MVP)
         img->GetShader()->use();
         img->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
         img->GetTexture()->Bind();
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        gl::DrawArrays(gl::TRIANGLES, 0, 6);
     }
 
     if (mTextBox.ReDissolveEnabled())

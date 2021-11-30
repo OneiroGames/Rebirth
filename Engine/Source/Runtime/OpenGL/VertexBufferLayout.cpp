@@ -3,11 +3,11 @@
 //
 
 #include "VertexBufferLayout.h"
-#include "glad/glad.h"
+#include "OpenGL/ogl4.5.hpp"
 
 template<>
-void VertexBufferLayout::Push<float>(const uint32_t& id, const uint32_t& size, const uint32_t& stride, const uint32_t& pointer)
+void VertexBufferLayout::Push<float>(const uint32_t id, const uint32_t size, const uint32_t stride, const uint32_t pointer)
 {
-    glEnableVertexAttribArray(id);
-    glVertexAttribPointer(id, (int)size, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)pointer);
+    gl::EnableVertexAttribArray(id);
+    gl::VertexAttribPointer(id, (int)size, gl::FLOAT, gl::FALSE_, stride * sizeof(float), (void*)pointer);
 }

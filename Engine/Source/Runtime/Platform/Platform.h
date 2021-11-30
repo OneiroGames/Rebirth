@@ -7,7 +7,7 @@
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
-#include "glad/glad.h"
+#include "OpenGL/ogl4.5.hpp"
 
 
 struct WindowProperties
