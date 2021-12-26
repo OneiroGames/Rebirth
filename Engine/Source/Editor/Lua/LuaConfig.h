@@ -1,6 +1,9 @@
 //
-// Created by dezlow on 28.09.2021.
+// Created by Dezlow on 28.09.2021.
+// Copyright (c) 2021 Oneiro Games. All rights reserved.
 //
+
+#pragma once
 
 #ifndef REBIRTH_LUACONFIG_H
 #define REBIRTH_LUACONFIG_H
@@ -12,7 +15,7 @@ class LuaConfig
 {
 public:
     LuaConfig() = default;
-public:
+    ~LuaConfig() = default;
     void Run(sol::state& lua, const std::string& cfgFile);
 
     [[nodiscard]] uint32_t GetWindowWidth() const

@@ -1,6 +1,9 @@
 //
-// Created by dezlow on 15.10.2021.
+// Created by Dezlow on 15.10.2021.
+// Copyright (c) 2021 Oneiro Games. All rights reserved.
 //
+
+#pragma once
 
 #ifndef REBIRTH_TRANSITION_H
 #define REBIRTH_TRANSITION_H

@@ -1,19 +1,20 @@
 //
-// Created by dezlow on 29.09.2021.
+// Created by Dezlow on 29.09.2021.
+// Copyright (c) 2021 Oneiro Games. All rights reserved.
 //
+
+#pragma once
 
 #ifndef REBIRTH_LUAIMAGE_H
 #define REBIRTH_LUAIMAGE_H
-
-
-#include "Runtime/OpenGL/Shader.h"
-#include "Runtime/OpenGL/Texture.h"
-#include "Runtime/OpenGL/Transition.h"
 
 #include <utility>
 
 #define SOL_ALL_SAFETIES_ON 1
 #include "sol/sol.hpp"
+#include "Runtime/OpenGL/Shader.h"
+#include "Runtime/OpenGL/Texture.h"
+#include "Runtime/OpenGL/Transition.h"
 
 class LuaImage
 {
@@ -27,7 +28,7 @@ public:
     [[nodiscard]] bool IsSprite() const { return mIsSprite; }
     [[nodiscard]] float GetCurrentAlpha() const { return mCurrentAlpha; }
 
-    void SetAlpha(const float& alpha) { mImageShader.SetUniform<float>("uTextureAlpha", alpha); mCurrentAlpha = alpha; }
+    void SetAlpha(float alpha) { mImageShader.SetUniform("uTextureAlpha", alpha); mCurrentAlpha = alpha; }
 
     void Load();
     void UnLoad();

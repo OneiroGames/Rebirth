@@ -1,5 +1,6 @@
 //
-// Created by dezlow on 17.09.2021.
+// Created by Dezlow on 17.09.2021.
+// Copyright (c) 2021 Oneiro Games. All rights reserved.
 //
 
 #include <iostream>
@@ -84,12 +85,12 @@ void Shader::UnLoad() const
     gl::DeleteProgram(mShaderID);
 }
 
-GLint Shader::GetUniformLocation(const std::string& name) const
+GLint Shader::GetUniformLocation(const char* name) const
 {
     if (mUniformLocationCache.find(name) != mUniformLocationCache.end())
         return mUniformLocationCache[name];
 
-    GLint location = gl::GetUniformLocation(mShaderID, name.c_str());
+    GLint location = gl::GetUniformLocation(mShaderID, name);
     mUniformLocationCache[name] = location;
     return location;
 }
@@ -153,28 +154,4 @@ void CheckCompileErrors(uint32_t shader, const char* type)
             std::cout << infoLog << std::endl;
         }
     }
-}
-
-template<>
-void Shader::SetUniform<float>(const std::string& uniformName, const float& value)
-{
-    gl::Uniform1f(GetUniformLocation(uniformName), value);
-}
-
-template<>
-void Shader::SetUniform<int>(const std::string& uniformName, const int& value)
-{
-    gl::Uniform1i(GetUniformLocation(uniformName), value);
-}
-
-template<>
-void Shader::SetUniform<glm::vec3>(const std::string& uniformName, const glm::vec3& value)
-{
-    gl::Uniform3fv(GetUniformLocation(uniformName), 1, &value[0]);
-}
-
-template<>
-void Shader::SetUniform<glm::mat4>(const std::string& uniformName, const glm::mat4& value)
-{
-    gl::UniformMatrix4fv(GetUniformLocation(uniformName), 1, gl::FALSE_, &value[0][0]);
 }

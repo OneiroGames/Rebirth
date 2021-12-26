@@ -1,6 +1,9 @@
 //
-// Created by dezlow on 01.10.2021.
+// Created by Dezlow on 01.10.2021.
+// Copyright (c) 2021 Oneiro Games. All rights reserved.
 //
+
+#pragma once
 
 #ifndef REBIRTH_TEXT_H
 #define REBIRTH_TEXT_H
@@ -8,7 +11,6 @@
 #include "OpenGL/ogl4.5.hpp"
 #include "VertexArray.h"
 #include "VertexBuffer.h"
-#include "VertexBufferLayout.h"
 #include "Shader.h"
 
 #include "glm/vec3.hpp"
@@ -43,8 +45,6 @@ public:
     void DisplayAllText() { mTextToRender = mText; mTextCurrentIterator = mText.size(); }
     void ClearTextToRender() { mTextToRender.clear(); mTextCurrentIterator = 0; }
 private:
-    void InitFreeType(FT_Library* ft, const char* fontPath, FT_Face& face, unsigned int charSize);
-
     std::map<char, Character> mCharacters;
     std::string mTextToRender;
     std::string mText;
@@ -53,8 +53,6 @@ private:
     Shader mShader;
     uint32_t VAO{}, VBO{}, mTextCurrentIterator{};
     uint32_t mCharSize{};
-
-
 };
 
 

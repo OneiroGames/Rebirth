@@ -1,8 +1,9 @@
 //
-// Created by dezlow on 17.09.2021.
+// Created by Dezlow on 17.09.2021.
+// Copyright (c) 2021 Oneiro Games. All rights reserved.
 //
 
-#ifdef __MINGW64__
+#ifdef _WIN32
 
 #include <stdexcept>
 #include "WindowsWindow.h"
@@ -20,7 +21,7 @@ WindowProperties WindowHnd::CreateWindow(const uint32_t& width, const uint32_t& 
     };
 
     if (windowProps.window == nullptr)
-        std::runtime_error("Failed to create window!");
+        throw std::runtime_error("Failed to create window!");
 
     glfwMakeContextCurrent(windowProps.window);
     glfwSwapInterval(1);
@@ -28,4 +29,4 @@ WindowProperties WindowHnd::CreateWindow(const uint32_t& width, const uint32_t& 
     return windowProps;
 }
 
-#endif
+#endif //_WIN32

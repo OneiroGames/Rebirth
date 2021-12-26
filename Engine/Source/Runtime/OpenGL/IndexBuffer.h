@@ -1,6 +1,9 @@
 //
-// Created by dezlow on 18.09.2021.
+// Created by Dezlow on 18.09.2021.
+// Copyright (c) 2021 Oneiro Games. All rights reserved.
 //
+
+#pragma once
 
 #ifndef REBIRTH_INDEXBUFFER_H
 #define REBIRTH_INDEXBUFFER_H

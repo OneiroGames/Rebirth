@@ -1,5 +1,6 @@
 //
-// Created by dezlow on 25.09.2021.
+// Created by Dezlow on 25.09.2021.
+// Copyright (c) 2021 Oneiro Games. All rights reserved.
 //
 
 #include "Application.h"
@@ -8,14 +9,8 @@
 extern std::vector<VNStatementInfo> StatementsList;
 extern std::deque<LuaImage*> images;
 
-/*#include "ImGui/imgui.h"
-#include "ImGui/backends/imgui_impl_glfw.h"
-#include "ImGui/backends/imgui_impl_opengl3.h"
-#include <GL/glu.h>*/
-
 double deltaTime = 0.0f;
 bool NextState = true;
-bool LeftButtonPress = false;
 bool isStartGame = true;
 
 Application::Application() = default;
@@ -27,23 +22,16 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 void Application::Run()
 {
     double lastFrame = 0.0f;
-
     double last = 0.0f, first = 0.0f;
     bool skip = false;
-
     mTextRender.Init("game/data/fonts/font.ttf", 34);
     mTextNameRender.Init("game/data/fonts/font.ttf", 36);
-    float timerToNextChar = 0.02f;
+    float timerToNextChar = 0.05f;
 
-    /*bool st = true;
+    glm::mat4 proj = glm::ortho(0.0f, 1920.0f, 0.0f, 1080.0f, -1.0f, 1.0f);
+    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f));
 
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(mWindowProps.window, true);
-    ImGui_ImplOpenGL3_Init("#version 330 core");
-    bool ts = true;*/
+    glm::mat4 MVP = proj * view;
 
     while (!glfwWindowShouldClose(mWindowProps.window))
     {
@@ -52,43 +40,15 @@ void Application::Run()
         gl::ClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
-        /*double CursorPosX{}, CursorPosY{};
-
-        glfwGetCursorPos(mWindowProps.window, &CursorPosX, &CursorPosY);
-
-        GLdouble modelView[16];
-        GLdouble projection[16];
-        GLint viewport[4];
-        glGetDoublev(GL_MODELVIEW_MATRIX,modelView);
-        glGetDoublev(GL_PROJECTION_MATRIX,projection);
-        glGetIntegerv(GL_VIEWPORT,viewport);
-
-        double tx, ty, tz;
-        gluUnProject(CursorPosX, CursorPosY,0.0, modelView,projection, viewport, &tx, &ty, &tz);
-git clone --recurse-submodules $(sed -n "$i, 1p" modules.txt)
-        if (tx >= 0.45 && tx <= 1.0 && ty >= 0.2 && ty <= 1.0)
-        {
-            ts = true;
-        }
-        else
-        {
-            ts = false;
-        }*/
-
         glfwGetFramebufferSize(mWindowProps.window, &mWindowProps.width, &mWindowProps.height);
         gl::Viewport(0, 0, mWindowProps.width, mWindowProps.height);
 
         double currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-
         first = glfwGetTime();
+
         mTextNameRender.DisplayAllText();
-
-        glm::mat4 proj = glm::ortho(0.0f, 1920.0f, 0.0f, 1080.0f, -1.0f, 1.0f);
-        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f));
-
-        glm::mat4 MVP = proj * view;
 
         mVAO.Bind();
 
@@ -97,12 +57,9 @@ git clone --recurse-submodules $(sed -n "$i, 1p" modules.txt)
             NextState = false;
         }
 
-        if (NextState && mTextBox.ReDissolveEnabled() || mTextBox.DissolveEnabled())
+        if (NextState && mTextBox.ReDissolveEnabled() || mTextBox.DissolveEnabled() && !images.empty() && images[images.size() - 1]->GetTransition()->isShowed())
         {
-            if (!images.empty() && images[images.size() - 1]->GetTransition()->isShowed())
-            {
-                NextState = false;
-            }
+            NextState = false;
         }
 
         if (!images.empty() && images[images.size() - 1]->GetTransition()->isShowed() && images[0]->GetTransition()->isShowed() && !mTextBox.ReDissolveEnabled() && !mTextBox.DissolveEnabled())
@@ -113,7 +70,7 @@ git clone --recurse-submodules $(sed -n "$i, 1p" modules.txt)
             }
             else
             {
-                if (first >= timerToNextChar && !skip)
+                if (first + timerToNextChar >= timerToNextChar && !skip)
                 {
                     last = glfwGetTime();
                     skip = true;
@@ -150,7 +107,7 @@ git clone --recurse-submodules $(sed -n "$i, 1p" modules.txt)
         if (mTextBox.ReDissolveEnabled())
         {
             mTextBox.GetImage()->GetShader()->use();
-            mTextBox.GetImage()->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
+            mTextBox.GetImage()->GetShader()->SetUniform("uMVP", MVP);
             mTextBox.GetImage()->GetTexture()->Bind();
 
             gl::DrawArrays(gl::TRIANGLES, 0, 6);
@@ -163,7 +120,7 @@ git clone --recurse-submodules $(sed -n "$i, 1p" modules.txt)
             if (!mTextBox.ReDissolveEnabled())
             {
                 mTextBox.GetImage()->GetShader()->use();
-                mTextBox.GetImage()->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
+                mTextBox.GetImage()->GetShader()->SetUniform("uMVP", MVP);
                 mTextBox.GetImage()->GetTexture()->Bind();
 
                 gl::DrawArrays(gl::TRIANGLES, 0, 6);
@@ -178,27 +135,10 @@ git clone --recurse-submodules $(sed -n "$i, 1p" modules.txt)
             }
         }
 
-        /*ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        ImGui::Begin("Debug");
-        ImGui::Text("Mouse X: %f", (float)tx);
-        ImGui::Text("Mouse Y: %f", (float)ty);
-        ImGui::Text("Mouse Button Hover: %i", ts);
-        ImGui::End();
-
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());*/
-
         isStartGame = false;
 
         glfwSwapBuffers(mWindowProps.window);
     }
-
-    /*ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();*/
 }
 
 void Application::Init()
@@ -228,8 +168,7 @@ void Application::Init()
     mVAO.Init();
     mVAO.Bind();
     mVBO.Create(sizeof(vertices), vertices);
-    VertexBufferLayout::Push<float>(0,3,3,0);
-
+    mVBO.PushLayout<float>(0, 3, 3, 0);
     mVAO.UnBind();
     mVBO.UnBind();
 
@@ -289,7 +228,7 @@ void Application::NextStatement()
             StatementsList[mCurrentIterator].image->GetTransition()->SetType(TransitionTypes::DISSOLVE);
             mCurrentIterator++;
             NextState = false;
-            if (mTextBox.isShowed() >= 1.0f && !isStartGame)
+            if (mTextBox.isShowed() && !isStartGame)
             {
                 mTextBox.SetReDissolveEnabled();
             }
@@ -320,12 +259,12 @@ void Application::NextStatement()
     }
 }
 
-bool Application::UpdateImage(LuaImage* img, uint32_t& it, glm::mat4& MVP)
+bool Application::UpdateImage(LuaImage* img, uint32_t it, glm::mat4& MVP)
 {
     if (img->isLoaded())
     {
         img->GetShader()->use();
-        img->GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
+        img->GetShader()->SetUniform("uMVP", MVP);
         img->GetTexture()->Bind();
         gl::DrawArrays(gl::TRIANGLES, 0, 6);
     }
@@ -338,6 +277,9 @@ bool Application::UpdateImage(LuaImage* img, uint32_t& it, glm::mat4& MVP)
     {
         img->GetTransition()->UpdateReSprite(deltaTime);
         img->GetTransition()->UpdateReScene(deltaTime);
+
+        if (it == images.size())
+            return true;
 
         if (img->GetTransition()->ReSceneEnd() && NewBGId > 0)
         {
@@ -356,6 +298,7 @@ bool Application::UpdateImage(LuaImage* img, uint32_t& it, glm::mat4& MVP)
             else
             {
                 images[it]->GetTransition()->UpdateSprite(deltaTime);
+                return true;
             }
         }
         else
@@ -369,15 +312,8 @@ bool Application::UpdateImage(LuaImage* img, uint32_t& it, glm::mat4& MVP)
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-    if (action == GLFW_PRESS)
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
     {
-        switch (button)
-        {
-        case GLFW_MOUSE_BUTTON_LEFT:
-            NextState = true;
-            break;
-        default:
-            break;
-        }
+        NextState = true;
     }
 }

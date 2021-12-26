@@ -1,10 +1,12 @@
 //
-// Created by dezlow on 15.10.2021.
+// Created by Dezlow on 15.10.2021.
+// Copyright (c) 2021 Oneiro Games. All rights reserved.
 //
 
 #include "Transition.h"
 #include "Editor/Lua/LuaImage.h"
 #include "Runtime/Core/Core.h"
+
 extern std::deque<LuaImage*> images;
 
 void Transition::UpdateScene(const float dt)
@@ -113,8 +115,9 @@ void Transition::UpdateReSprite(const float dt)
                 if (img == mData.image)
                 {
                     images.erase(it);
+                    break;
                 }
-                it++;
+                if (it != images.end()) it++;
             }
             mData.currentReAlpha = 1.0f;
             mData.currentAlpha = 0.0f;

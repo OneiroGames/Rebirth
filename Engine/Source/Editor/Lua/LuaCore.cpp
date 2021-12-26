@@ -1,10 +1,12 @@
 //
-// Created by dezlow on 05.10.2021.
+// Created by Dezlow on 05.10.2021.
+// Copyright (c) 2021 Oneiro Games. All rights reserved.
 //
 
 #include <vector>
 #include "LuaCore.h"
 #include "Runtime/Core/Core.h"
+
 extern std::vector<VNStatementInfo> StatementsList;
 
 #include "Editor/Lua/LuaImage.h"

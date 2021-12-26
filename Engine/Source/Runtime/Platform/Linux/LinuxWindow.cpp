@@ -1,5 +1,6 @@
 //
-// Created by dezlow on 22.09.2021.
+// Created by Dezlow on 22.09.2021.
+// Copyright (c) 2021 Oneiro Games. All rights reserved.
 //
 
 #ifdef __linux__

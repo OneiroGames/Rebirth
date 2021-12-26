@@ -1,5 +1,6 @@
 //
-// Created by dezlow on 17.09.2021.
+// Created by Dezlow on 17.09.2021.
+// Copyright (c) 2021 Oneiro Games. All rights reserved.
 //
 
 #ifndef REBIRTH_SHADER_H
@@ -9,6 +10,8 @@
 
 #include <string>
 #include <unordered_map>
+#include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
 
 class Shader
 {
@@ -22,12 +25,25 @@ public:
 
     void UnLoad() const;
 
-    template<class T>
-    void SetUniform(const std::string& uniformName, const T& value) {}
-private:
-    GLint GetUniformLocation(const std::string& name) const;
+    void SetUniform(const char* uname, float value) {
+        gl::Uniform1f(GetUniformLocation(uname), value);
+    }
 
-    mutable std::unordered_map<std::string, GLint> mUniformLocationCache;
+    void SetUniform(const char* uname, int value) {
+        gl::Uniform1i(GetUniformLocation(uname), value);
+    }
+
+    void SetUniform(const char* uname, const glm::vec3& value) {
+        gl::Uniform3fv(GetUniformLocation(uname), 1, &value[0]);
+    }
+
+    void SetUniform(const char* uname, const glm::mat4& value) {
+        gl::UniformMatrix4fv(GetUniformLocation(uname), 1, gl::FALSE_, &value[0][0]);
+    }
+private:
+    GLint GetUniformLocation(const char* name) const;
+
+    mutable std::unordered_map<const char*, GLint> mUniformLocationCache;
     uint32_t mShaderID{};
 };
 

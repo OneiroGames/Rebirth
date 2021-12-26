@@ -1,10 +1,13 @@
 //
-// Created by dezlow on 22.10.2021.
+// Created by Dezlow on 22.10.2021.
+// Copyright (c) 2021 Oneiro Games. All rights reserved.
 //
 
 #include "LuaTextBox.h"
 
-const char* LTBVertexShaderSrc = R"(
+void LuaTextBox::Init(const std::string& pathToImg)
+{
+    const char* LTBVertexShaderSrc = R"(
             #version 330 core
             layout (location = 0) in vec3 aPos;
             layout (location = 1) in vec2 aTexCoords;
@@ -19,7 +22,7 @@ const char* LTBVertexShaderSrc = R"(
             }
         )";
 
-const char* LTBFragmentShaderSrc = R"(
+    const char* LTBFragmentShaderSrc = R"(
             #version 330 core
             out vec4 FragColor;
 
@@ -42,16 +45,14 @@ const char* LTBFragmentShaderSrc = R"(
             }
         )";
 
-void LuaTextBox::Init(const std::string& pathToImg)
-{
     mTextBoxImage = LuaImage(pathToImg);
     mTextBoxImage.GetTransition()->SetType(TransitionTypes::DISSOLVE);
     mTextBoxImage.GetShader()->LoadFromSource(LTBVertexShaderSrc, LTBFragmentShaderSrc);
     mTextBoxImage.GetTexture()->Load(pathToImg);
 
     mTextBoxImage.GetShader()->use();
-    mTextBoxImage.GetShader()->SetUniform<int>("uTextureWidth", mTextBoxImage.GetTexture()->GetWidth());
-    mTextBoxImage.GetShader()->SetUniform<int>("uTextureHeight", mTextBoxImage.GetTexture()->GetHeight());
+    mTextBoxImage.GetShader()->SetUniform("uTextureWidth", mTextBoxImage.GetTexture()->GetWidth());
+    mTextBoxImage.GetShader()->SetUniform("uTextureHeight", mTextBoxImage.GetTexture()->GetHeight());
 }
 
 void LuaTextBox::Update(const float& dt)
@@ -86,10 +87,10 @@ void LuaTextBox::Update(const float& dt)
     }
 }
 
-void LuaTextBox::Draw(glm::mat4& MVP)
+void LuaTextBox::Draw(const glm::mat4& MVP)
 {
     mTextBoxImage.GetShader()->use();
-    mTextBoxImage.GetShader()->SetUniform<glm::mat4>("uMVP", MVP);
+    mTextBoxImage.GetShader()->SetUniform("uMVP", MVP);
     mTextBoxImage.GetTexture()->Bind();
 
     gl::DrawArrays(gl::TRIANGLES, 0, 6);

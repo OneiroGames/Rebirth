@@ -1,11 +1,14 @@
 //
-// Created by dezlow on 29.09.2021.
+// Created by Dezlow on 29.09.2021.
+// Copyright (c) 2021 Oneiro Games. All rights reserved.
 //
+
+#pragma once
 
 #ifndef REBIRTH_CORE_H
 #define REBIRTH_CORE_H
 
-#include <iostream>
+#include <string>
 #include <vector>
 #include <deque>
 

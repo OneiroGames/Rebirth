@@ -1,5 +1,6 @@
 //
-// Created by dezlow on 01.10.2021.
+// Created by Dezlow on 01.10.2021.
+// Copyright (c) 2021 Oneiro Games. All rights reserved.
 //
 
 #include "Text.h"
@@ -150,8 +151,8 @@ void Text::Init(const std::string& fontPath, uint16_t charsSize)
 void Text::Render(const glm::mat4& MVP, float x, float y, const glm::vec3& color)
 {
     mShader.use();
-    mShader.SetUniform<glm::mat4>("MVP", MVP);
-    mShader.SetUniform<glm::vec3>("textColor", color);
+    mShader.SetUniform("MVP", MVP);
+    mShader.SetUniform("textColor", color);
 
     gl::ActiveTexture(gl::TEXTURE0);
     gl::BindVertexArray(VAO);
@@ -213,93 +214,4 @@ void Text::DisplayNextChar()
     {
         return;
     }
-}
-
-void Text::InitFreeType(FT_Library* ft, const char* fontPath, FT_Face& face, unsigned int charSize)
-{
-    if (FT_New_Face(*ft, fontPath, 0, &face)) {
-        std::runtime_error("FreeType: failed to load font in " + std::string(fontPath) + " path!");
-    }
-    else {
-        FT_Set_Pixel_Sizes(face, 0, charSize);
-
-        gl::PixelStorei(gl::UNPACK_ALIGNMENT, 1);
-
-        for (unsigned int c = 0; c < 256; c++)
-        {
-            if ((c >= 0xC0) && (c <= 0xDF))
-            {
-                if (FT_Load_Char(face, 0x0410 + (c - 0xC0), FT_LOAD_RENDER))
-                {
-                    continue;
-                }
-            }
-            else if ((c >= 0xE0) && (c <= 0xFF))
-            {
-                if (FT_Load_Char(face, 0x0430 + (c - 0xE0), FT_LOAD_RENDER))
-                {
-                    continue;
-                }
-            }
-            else if (c == 0xA8)
-            {
-                if (FT_Load_Char(face, 0x0401, FT_LOAD_RENDER))
-                {
-                    continue;
-                }
-            }
-            else if (c == 0xB8)
-            {
-                if (FT_Load_Char(face, 0x0451, FT_LOAD_RENDER))
-                {
-                    continue;
-                }
-            }
-            else if (c == 0x85)
-            {
-                if (FT_Load_Char(face, 0x2026, FT_LOAD_RENDER))
-                {
-                    continue;
-                }
-            }
-            else
-            {
-                if (FT_Load_Char(face, c, FT_LOAD_RENDER))
-                {
-                    continue;
-                }
-            }
-
-            unsigned int texture;
-            gl::GenTextures(1, &texture);
-            gl::BindTexture(gl::TEXTURE_2D, texture);
-            gl::TexImage2D(
-                    gl::TEXTURE_2D,
-                    0,
-                    gl::RED,
-                    face->glyph->bitmap.width,
-                    face->glyph->bitmap.rows,
-                    0,
-                    gl::RED,
-                    gl::UNSIGNED_BYTE,
-                    face->glyph->bitmap.buffer
-            );
-
-            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_S, gl::CLAMP_TO_EDGE);
-            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_T, gl::CLAMP_TO_EDGE);
-            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::LINEAR);
-            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::LINEAR);
-
-            Character character = {
-                    texture,
-                    glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-                    glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-                    static_cast<unsigned int>(face->glyph->advance.x)
-            };
-            mCharacters.insert(std::pair<char, Character>(c, character));
-        }
-        gl::BindTexture(gl::TEXTURE_2D, 0);
-    }
-
-    FT_Done_Face(face);
 }

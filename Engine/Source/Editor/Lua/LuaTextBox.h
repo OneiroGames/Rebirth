@@ -1,10 +1,12 @@
 //
-// Created by dezlow on 22.10.2021.
+// Created by Dezlow on 22.10.2021.
+// Copyright (c) 2021 Oneiro Games. All rights reserved.
 //
+
+#pragma once
 
 #ifndef REBIRTH_LUATEXTBOX_H
 #define REBIRTH_LUATEXTBOX_H
-
 
 #include "Editor/Lua/LuaImage.h"
 #include "glm/glm.hpp"
@@ -38,7 +40,7 @@ public:
     }
 
     void Update(const float& dt);
-    void Draw(glm::mat4& MVP);
+    void Draw(const glm::mat4& MVP);
 
     void SetDissolveEnabled();
     void SetReDissolveEnabled();

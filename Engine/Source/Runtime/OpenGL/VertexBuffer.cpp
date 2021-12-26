@@ -1,9 +1,9 @@
 //
 // Created by dezlow on 18.09.2021.
+// Copyright (c) 2021 Oneiro Games. All rights reserved.
 //
 
 #include "VertexBuffer.h"
-#include "OpenGL/ogl4.5.hpp"
 
 VertexBuffer::VertexBuffer(const uint32_t size, const float* pVertices, bool dynamic_draw) : mVertexBufferID(0)
 {
